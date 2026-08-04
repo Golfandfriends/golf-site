@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){
+  var ROLE_KEY='gfRole';
+  var role = localStorage.getItem(ROLE_KEY);
+  if (role !== 'player' && role !== 'admin') {
+    location.replace('login.html?next=' + encodeURIComponent(location.pathname + location.search));
+  } else {
+    window.addEventListener('DOMContentLoaded', function(){
+      var btn = document.createElement('a');
+      btn.href = '#';
+      btn.textContent = role === 'admin' ? 'Esci (admin)' : 'Esci';
+      btn.setAttribute('style','position:fixed;bottom:12px;right:12px;background:#001e3c;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-family:Inter,sans-serif;text-decoration:none;z-index:9999;opacity:0.85;');
+      btn.onclick = function(e){
+        e.preventDefault();
+        localStorage.removeItem(ROLE_KEY);
+        location.href='login.html';
+      };
+      document.body.appendChild(btn);
+    });
+  }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistiche — Golf & Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=45">
+</head>
+<body class="turf-bg">
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="img/logo.svg" class="brand-icon" alt="Golf &amp; Friends"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="classifica.html">Classifica gare</a>
+      <a href="calendario.html">Calendario</a>
+      <a href="money-list.html">Money List</a>
+      <a href="premi.html">Tab Premi</a>
+      <a href="giocatori.html">Giocatori</a>
+      <a href="statistiche.html">Statistiche</a>
+      <a href="galleria.html">Galleria</a>
+      <a href="statuto.html">Statuto</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding-bottom:12px;">
+  <div class="wrap">
+    <h1 style="font-size:2.2rem;">Statistiche</h1>
+    <p class="lede">Numeri e curiosità della stagione 2026.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid grid-4" id="stat-tiles" style="margin-bottom:8px; gap:12px;"></div>
+
+  <div class="section-title"><h2>Curiosità della stagione</h2></div>
+  <div class="grid grid-3">
+    <section class="card leaderboard-card">
+      <div class="card-header"><h3>Netto medio</h3></div>
+      <div class="card-body" style="padding:0; overflow-x:auto;">
+        <table class="leaderboard" id="tabella-netto-medio">
+          <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Netto medio</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="card leaderboard-card">
+      <div class="card-header"><h3>Lordo medio</h3></div>
+      <div class="card-body" style="padding:0; overflow-x:auto;">
+        <table class="leaderboard" id="tabella-lordo-medio">
+          <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Lordo medio</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="card leaderboard-card">
+      <div class="card-header"><h3>Più vittorie</h3></div>
+      <div class="card-body" style="padding:0; overflow-x:auto;">
+        <table class="leaderboard" id="tabella-vittorie">
+          <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">1°</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="card leaderboard-card">
+      <div class="card-header"><h3>Più piazzamenti (Top 4)</h3></div>
+      <div class="card-body" style="padding:0; overflow-x:auto;">
+        <table class="leaderboard" id="tabella-piazzamenti">
+          <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Top 4</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="card leaderboard-card">
+      <div class="card-header"><h3>Più round giocati</h3></div>
+      <div class="card-body" style="padding:0; overflow-x:auto;">
+        <table class="leaderboard" id="tabella-round">
+          <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Round</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-title"><h2>Money list</h2></div>
+  <a class="btn btn-primary" href="money-list.html">Guarda la Money List</a>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Golf & Friends — sito del gruppo, gestito tra amici.</span>
+    <span>Dati modificabili in <code>/data/data.json</code></span>
+  </div>
+</footer>
+
+<script src="js/common.js?v=45"></script>
+<script>
+(async function () {
+  const data = await loadData();
+
+  // ---- Stat tiles ----
+  const numGare = data.gare.length;
+  const numGiocatori = data.giocatori.length;
+  const classificheGare = data.gare.map((g) => calcolaClassificaGara(data, g));
+  const tuttiNetti = classificheGare.flatMap((righe) => righe.map((r) => r.netto));
+  const mediaNetto = tuttiNetti.length ? (tuttiNetti.reduce((a, b) => a + b, 0) / tuttiNetti.length).toFixed(1) : "—";
+  const scatoletteTotali = calcolaScatoletteTotali(data).reduce((s, r) => s + r.totale, 0);
+
+  document.getElementById("stat-tiles").innerHTML = `
+    <div class="stat-tile"><span class="num">${numGare}</span><span class="label">Gare giocate</span></div>
+    <div class="stat-tile"><span class="num">${numGiocatori}</span><span class="label">Giocatori attivi</span></div>
+    <div class="stat-tile"><span class="num">${mediaNetto}</span><span class="label">Netto medio del gruppo</span></div>
+    <div class="stat-tile"><span class="num">${scatoletteTotali}</span><span class="label">Scatolette assegnate</span></div>
+  `;
+
+  // ---- Netto medio e Lordo medio per giocatore (più basso = meglio) ----
+  const nettiPerGiocatore = {};
+  const lordiPerGiocatore = {};
+  data.giocatori.forEach((p) => {
+    nettiPerGiocatore[p.id] = [];
+    lordiPerGiocatore[p.id] = [];
+  });
+  classificheGare.forEach((righe) =>
+    righe.forEach((r) => {
+      nettiPerGiocatore[r.giocatore].push(r.netto);
+      lordiPerGiocatore[r.giocatore].push(r.lordo);
+    })
+  );
+  const mediaPerGiocatore = {};
+  const mediaLordoPerGiocatore = {};
+  data.giocatori.forEach((p) => {
+    const valoriNetti = nettiPerGiocatore[p.id];
+    const valoriLordi = lordiPerGiocatore[p.id];
+    mediaPerGiocatore[p.id] = valoriNetti.length ? valoriNetti.reduce((a, b) => a + b, 0) / valoriNetti.length : null;
+    mediaLordoPerGiocatore[p.id] = valoriLordi.length ? valoriLordi.reduce((a, b) => a + b, 0) / valoriLordi.length : null;
+  });
+
+  // ---- Curiosità: leaderboard riutilizzabile per tutte le mini-classifiche ----
+  function renderLeaderboardTabella(idTabella, righeOrdinate, campoValore, suffisso = "") {
+    const tbody = document.querySelector(`#${idTabella} tbody`);
+    if (righeOrdinate.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="muted">Nessun dato ancora.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = righeOrdinate
+      .map((r, i) => {
+        const pos = i + 1;
+        const classePos = "plain";
+        const valore = r[campoValore] === null ? "—" : `${r[campoValore]}${suffisso}`;
+        return `
+        <tr class="lb-row">
+          <td class="num"><span class="lb-pos ${classePos}">${pos}</span></td>
+          <td class="player-name">${playerName(data, r.giocatore)}</td>
+          <td class="num">${valore}</td>
+        </tr>`;
+      })
+      .join("");
+  }
+
+  const classificaNettoMedio = data.giocatori
+    .map((p) => ({ giocatore: p.id, valore: mediaPerGiocatore[p.id] === null ? null : mediaPerGiocatore[p.id].toFixed(1) }))
+    .sort((a, b) => {
+      if (a.valore === null) return 1;
+      if (b.valore === null) return -1;
+      return a.valore - b.valore;
+    });
+  const classificaLordoMedio = data.giocatori
+    .map((p) => ({ giocatore: p.id, valore: mediaLordoPerGiocatore[p.id] === null ? null : mediaLordoPerGiocatore[p.id].toFixed(1) }))
+    .sort((a, b) => {
+      if (a.valore === null) return 1;
+      if (b.valore === null) return -1;
+      return a.valore - b.valore;
+    });
+
+  const vittoriePerGiocatore = {};
+  const piazzamentiPerGiocatore = {};
+  const roundPerGiocatore = {};
+  data.giocatori.forEach((p) => {
+    vittoriePerGiocatore[p.id] = 0;
+    piazzamentiPerGiocatore[p.id] = 0;
+    roundPerGiocatore[p.id] = 0;
+  });
+  classificheGare.forEach((righe) => {
+    righe.forEach((r) => {
+      roundPerGiocatore[r.giocatore]++;
+      if (r.posizione === 1) vittoriePerGiocatore[r.giocatore]++;
+      if (r.posizione >= 1 && r.posizione <= 4) piazzamentiPerGiocatore[r.giocatore]++;
+    });
+  });
+
+  const classificaVittorie = data.giocatori
+    .map((p) => ({ giocatore: p.id, valore: vittoriePerGiocatore[p.id] }))
+    .sort((a, b) => b.valore - a.valore);
+  const classificaPiazzamenti = data.giocatori
+    .map((p) => ({ giocatore: p.id, valore: piazzamentiPerGiocatore[p.id] }))
+    .sort((a, b) => b.valore - a.valore);
+  const classificaRound = data.giocatori
+    .map((p) => ({ giocatore: p.id, valore: roundPerGiocatore[p.id] }))
+    .sort((a, b) => b.valore - a.valore);
+
+  renderLeaderboardTabella("tabella-netto-medio", classificaNettoMedio, "valore");
+  renderLeaderboardTabella("tabella-lordo-medio", classificaLordoMedio, "valore");
+  renderLeaderboardTabella("tabella-vittorie", classificaVittorie, "valore");
+  renderLeaderboardTabella("tabella-piazzamenti", classificaPiazzamenti, "valore");
+  renderLeaderboardTabella("tabella-round", classificaRound, "valore");
+})();
+</script>
+</body>
+</html>

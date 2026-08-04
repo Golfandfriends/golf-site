@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){
+  var ROLE_KEY='gfRole';
+  var role = localStorage.getItem(ROLE_KEY);
+  if (role !== 'player' && role !== 'admin') {
+    location.replace('login.html?next=' + encodeURIComponent(location.pathname + location.search));
+  } else {
+    window.addEventListener('DOMContentLoaded', function(){
+      var btn = document.createElement('a');
+      btn.href = '#';
+      btn.textContent = role === 'admin' ? 'Esci (admin)' : 'Esci';
+      btn.setAttribute('style','position:fixed;bottom:12px;right:12px;background:#001e3c;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-family:Inter,sans-serif;text-decoration:none;z-index:9999;opacity:0.85;');
+      btn.onclick = function(e){
+        e.preventDefault();
+        localStorage.removeItem(ROLE_KEY);
+        location.href='login.html';
+      };
+      document.body.appendChild(btn);
+    });
+  }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galleria — Golf & Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=45">
+</head>
+<body class="turf-bg">
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="img/logo.svg" class="brand-icon" alt="Golf &amp; Friends"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="classifica.html">Classifica gare</a>
+      <a href="calendario.html">Calendario</a>
+      <a href="money-list.html">Money List</a>
+      <a href="premi.html">Tab Premi</a>
+      <a href="giocatori.html">Giocatori</a>
+      <a href="statistiche.html">Statistiche</a>
+      <a href="galleria.html">Galleria</a>
+      <a href="statuto.html">Statuto</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding-bottom:12px;">
+  <div class="wrap">
+    <span class="eyebrow">Ricordi dal green</span>
+    <h1 style="font-size:2.2rem;">Galleria</h1>
+    <p class="lede">Foto dalle gare e dalle serate dopo. Sostituisci i riquadri con le foto vere in <code>/img</code>.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid grid-3" id="galleria-container"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Golf & Friends — sito del gruppo, gestito tra amici.</span>
+    <span>Dati modificabili in <code>/data/data.json</code></span>
+  </div>
+</footer>
+
+<script src="js/common.js?v=45"></script>
+<script>
+(async function () {
+  const data = await loadData();
+  const container = document.getElementById("galleria-container");
+
+  if (data.galleria.length === 0) {
+    container.innerHTML = `<div class="empty-state">Nessuna foto ancora. Aggiungine una dopo la prossima gara!</div>`;
+    return;
+  }
+
+  container.innerHTML = data.galleria
+    .map((item) => {
+      if (item.foto) {
+        return `
+    <div class="gallery-tile" style="background-image:url('${item.foto}'); background-size:cover; background-position:center;">
+      <div class="txt">
+        <h3>${item.titolo}</h3>
+        <p>${item.descrizione}</p>
+      </div>
+    </div>`;
+      }
+      return `
+    <div class="gallery-tile" style="background-color:${item.colore};">
+      <div class="txt">
+        <h3>${item.titolo}</h3>
+        <p>${item.descrizione}</p>
+      </div>
+    </div>`;
+    })
+    .join("");
+})();
+</script>
+</body>
+</html>

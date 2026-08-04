@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accesso — Golf & Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=45">
+<style>
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .login-card {
+    max-width: 380px;
+    width: 100%;
+  }
+  .login-card .card-body { display: flex; flex-direction: column; gap: 14px; }
+  .login-logo { display: flex; justify-content: center; margin-bottom: 6px; }
+  .login-logo img { width: 72px; height: 72px; }
+  .login-card h1 {
+    font-size: 1.15rem;
+    text-align: center;
+    margin: 0 0 4px;
+    color: var(--navy-deep);
+  }
+  .login-card p.lede {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+    margin: 0 0 8px;
+  }
+  .login-card input[type="password"] {
+    padding: 11px 14px;
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .login-card input[type="password"]:focus {
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+  }
+  .login-error {
+    color: var(--danger);
+    font-size: 0.85rem;
+    text-align: center;
+    min-height: 1.1em;
+  }
+  .login-card .btn { width: 100%; justify-content: center; }
+</style>
+</head>
+<body class="turf-bg">
+
+<div class="login-wrap">
+  <div class="card login-card">
+    <div class="card-body">
+      <div class="login-logo"><img src="img/logo.svg" alt="Golf & Friends"></div>
+      <h1>Golf &amp; Friends</h1>
+      <p class="lede">Area riservata — inserisci la password per accedere</p>
+      <form id="login-form">
+        <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" autofocus>
+        <div class="login-error" id="login-error"></div>
+        <button type="submit" class="btn btn-primary" style="margin-top:6px;">Entra</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var PLAYER_PW = 'Golflignano';
+  var ADMIN_PW = 'Golflignano2026';
+  var ROLE_KEY = 'gfRole';
+
+  var form = document.getElementById('login-form');
+  var input = document.getElementById('login-password');
+  var errorEl = document.getElementById('login-error');
+
+  function getNext(){
+    var params = new URLSearchParams(location.search);
+    var next = params.get('next');
+    if (!next || next.indexOf('login.html') !== -1) return 'index.html';
+    return next;
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var val = input.value;
+    var role = null;
+    if (val === ADMIN_PW) role = 'admin';
+    else if (val === PLAYER_PW) role = 'player';
+
+    if (role) {
+      localStorage.setItem(ROLE_KEY, role);
+      location.href = getNext();
+    } else {
+      errorEl.textContent = 'Password non corretta, riprova.';
+      input.value = '';
+      input.focus();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

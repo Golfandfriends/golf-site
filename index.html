@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){
+  var ROLE_KEY='gfRole';
+  var role = localStorage.getItem(ROLE_KEY);
+  if (role !== 'player' && role !== 'admin') {
+    location.replace('login.html?next=' + encodeURIComponent(location.pathname + location.search));
+  } else {
+    window.addEventListener('DOMContentLoaded', function(){
+      var btn = document.createElement('a');
+      btn.href = '#';
+      btn.textContent = role === 'admin' ? 'Esci (admin)' : 'Esci';
+      btn.setAttribute('style','position:fixed;bottom:12px;right:12px;background:#001e3c;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-family:Inter,sans-serif;text-decoration:none;z-index:9999;opacity:0.85;');
+      btn.onclick = function(e){
+        e.preventDefault();
+        localStorage.removeItem(ROLE_KEY);
+        location.href='login.html';
+      };
+      document.body.appendChild(btn);
+    });
+  }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golf & Friends — Golf tra amici</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=45">
+</head>
+<body class="turf-bg">
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="img/logo.svg" class="brand-icon" alt="Golf &amp; Friends"></a>
+    <div class="nav-links">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="classifica.html">Classifica gare</a>
+      <a href="calendario.html">Calendario</a>
+      <a href="money-list.html">Money List</a>
+      <a href="premi.html">Tab Premi</a>
+      <a href="giocatori.html">Giocatori</a>
+      <a href="statistiche.html">Statistiche</a>
+      <a href="galleria.html">Galleria</a>
+      <a href="statuto.html">Statuto</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <span class="eyebrow" style="font-size:1.05rem; letter-spacing:0.08em; font-weight:700;">Golf Club Lignano · dal 2015</span>
+      <h1>18 buche.<br>Una sola vera passione:<br>stare insieme!</h1>
+      <div class="flex" style="margin-top:22px;">
+        <a class="btn btn-primary" href="classifica.html">Vedi l'ultima classifica</a>
+        <a class="btn btn-outline" href="calendario.html">Prossime gare</a>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <img src="img/campo-home.jpeg" alt="Il campo da golf">
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="grid grid-2" style="align-items:start;">
+    <section class="card">
+      <div class="card-header">
+        <h2>Prossima gara</h2>
+        <span class="meta" id="prossima-data"></span>
+      </div>
+      <div class="card-body" id="prossima-gara-body">
+        <p class="muted">Caricamento…</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h3>Meteo campo</h3>
+      </div>
+      <div class="card-body" data-meteo>
+        <p class="muted">Caricamento meteo…</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-title">
+    <h2>Ultima classifica</h2>
+    <a class="btn btn-outline" href="classifica.html" style="padding:6px 14px; font-size:0.82rem;">Tutte le gare →</a>
+  </div>
+  <section class="card">
+    <div class="card-header">
+      <h3 id="ultima-gara-nome"></h3>
+      <span class="meta" id="ultima-gara-meta"></span>
+    </div>
+    <div class="card-body">
+      <table class="scorecard" id="ultima-classifica-tabella">
+        <thead>
+          <tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Netto</th><th class="num">Premio</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="section-title">
+    <h2>Resta in contatto</h2>
+  </div>
+  <section class="card">
+    <div class="card-body flex" data-group-links></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Golf & Friends — sito del gruppo, gestito tra amici.</span>
+    <span>Dati modificabili in <code>/data/data.json</code></span>
+  </div>
+</footer>
+
+<script src="js/common.js?v=45"></script>
+<script>
+(async function () {
+  const data = await loadData();
+  renderGroupLinks(data);
+  loadMeteo(data);
+
+  // Prossima gara
+  const next = data.prossimeGare[0];
+  document.getElementById("prossima-data").textContent = next ? formatDateIt(next.data) : "";
+  document.getElementById("prossima-gara-body").innerHTML = next
+    ? `
+      <h3 class="mt-0">${next.nome}</h3>
+      <p class="muted" style="margin-top:-6px;">${next.formato} · tee time ${next.teeTime}</p>
+      <p>${next.note}</p>
+      <span class="pill gold">${formatDateIt(next.data)}</span>
+    `
+    : `<div class="empty-state">Nessuna gara in calendario. Proponine una nel gruppo!</div>`;
+
+  // Ultima classifica (ultima gara per data)
+  const gare = [...data.gare].sort((a, b) => new Date(b.data) - new Date(a.data));
+  const ultima = gare[0];
+  if (ultima) {
+    document.getElementById("ultima-gara-nome").textContent = ultima.nome;
+    document.getElementById("ultima-gara-meta").textContent = `${formatDateIt(ultima.data)} · ${ultima.formato}`;
+    const tbody = document.querySelector("#ultima-classifica-tabella tbody");
+    const righe = calcolaClassificaGara(data, ultima).slice(0, 5);
+    tbody.innerHTML = righe
+      .map((r) => {
+        const scatolette = calcolaPremio(data, ultima.risultati.length, r.posizione);
+        return `
+      <tr class="pos-${r.posizione}">
+        <td class="num pos">${r.posizione}</td>
+        <td class="player-name">${r.nome}</td>
+        <td class="num">${r.netto}</td>
+        <td class="num">${badgePremio(scatolette)}</td>
+      </tr>`;
+      })
+      .join("");
+  }
+})();
+</script>
+</body>
+</html>

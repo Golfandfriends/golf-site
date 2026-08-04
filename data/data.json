@@ -1,0 +1,1991 @@
+{
+  "club": {
+    "nome": "Golf & Friends",
+    "campoNome": "Golf Club Lignano",
+    "campoLat": 45.6897,
+    "campoLon": 13.13,
+    "whatsappLink": "https://chat.whatsapp.com/LENyY0yuJYIIhCa0sMfImS",
+    "telegramLink": "https://t.me/INSERISCI-IL-TUO-LINK"
+  },
+  "giocatori": [
+    {
+      "id": "p1",
+      "nome": "Andrea Faraglia",
+      "handicap": 9.6,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2019
+    },
+    {
+      "id": "p2",
+      "nome": "Alberto Ricci",
+      "handicap": 6.9,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2018
+    },
+    {
+      "id": "p3",
+      "nome": "Giorgio Pantano",
+      "handicap": 1.3,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2021
+    },
+    {
+      "id": "p4",
+      "nome": "Massimo Festa",
+      "handicap": 5.8,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2020
+    },
+    {
+      "id": "p5",
+      "nome": "Alessio Mangili",
+      "handicap": 6.3,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p6",
+      "nome": "Vincenzo Verità",
+      "handicap": 8.3,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2019
+    },
+    {
+      "id": "p7",
+      "nome": "Bepi Cenati",
+      "handicap": 15.8,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p8",
+      "nome": "Carlo De Roia",
+      "handicap": 3.5,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p9",
+      "nome": "Ettore Nicoletto",
+      "handicap": 8.9,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p10",
+      "nome": "Paolo Tedesco",
+      "handicap": 15.6,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p11",
+      "nome": "Gabriele Cocinelli",
+      "handicap": 8.8,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p12",
+      "nome": "Emiliano Piemonti",
+      "handicap": 24.3,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p13",
+      "nome": "Franco Serafin",
+      "handicap": 11.4,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p14",
+      "nome": "Massimo Franco",
+      "handicap": 2.2,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p15",
+      "nome": "Stefano Passilongo",
+      "handicap": 8.0,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p16",
+      "nome": "Massimiliano Murè",
+      "handicap": 20.8,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p17",
+      "nome": "Paolo De Roia",
+      "handicap": 9.8,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p18",
+      "nome": "Nicola Luce",
+      "handicap": 1.3,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p19",
+      "nome": "Renzo Fabretti",
+      "handicap": 19.7,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p20",
+      "nome": "Federico Taucer",
+      "handicap": 15.2,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p21",
+      "nome": "Paolo Zuliani",
+      "handicap": 12.8,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2022
+    },
+    {
+      "id": "p22",
+      "nome": "Franco Rizzo",
+      "handicap": 9.1,
+      "tee": "giallo",
+      "foto": "",
+      "socio_dal": 2026
+    }
+  ],
+  "gare": [
+    {
+      "id": "round1",
+      "numero": 1,
+      "nome": "Round 1",
+      "data": "2026-02-01",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p10",
+          "lordo": 87,
+          "hcpEga": 15.6
+        },
+        {
+          "giocatore": "p4",
+          "lordo": 79,
+          "hcpEga": 5.8
+        },
+        {
+          "giocatore": "p11",
+          "lordo": 83,
+          "hcpEga": 9.8
+        },
+        {
+          "giocatore": "p7",
+          "lordo": 98,
+          "hcpEga": 17.9
+        },
+        {
+          "giocatore": "p5",
+          "lordo": 87,
+          "hcpEga": 6.9
+        },
+        {
+          "giocatore": "p2",
+          "lordo": 88,
+          "hcpEga": 5.8
+        },
+        {
+          "giocatore": "p1",
+          "lordo": 94,
+          "hcpEga": 10.8
+        },
+        {
+          "giocatore": "p16",
+          "lordo": 106,
+          "hcpEga": 20.5,
+          "hcpGioco": 21
+        }
+      ]
+    },
+    {
+      "id": "round2",
+      "numero": 2,
+      "nome": "Round 2",
+      "data": "2026-02-13",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p4",
+          "lordo": 78,
+          "hcpEga": 5.8
+        },
+        {
+          "giocatore": "p8",
+          "lordo": 80,
+          "hcpEga": 3.5,
+          "hcpGioco": 4
+        },
+        {
+          "giocatore": "p2",
+          "lordo": 82,
+          "hcpEga": 5.8
+        },
+        {
+          "giocatore": "p1",
+          "lordo": 91,
+          "hcpEga": 10.8
+        },
+        {
+          "giocatore": "p9",
+          "lordo": 91,
+          "hcpEga": 8.9
+        },
+        {
+          "giocatore": "p6",
+          "lordo": 90,
+          "hcpEga": 6.8
+        },
+        {
+          "giocatore": "p22",
+          "lordo": 98,
+          "hcpEga": 10
+        },
+        {
+          "giocatore": "p11",
+          "lordo": 99,
+          "hcpEga": 9.8
+        },
+        {
+          "giocatore": "p5",
+          "lordo": 100,
+          "hcpEga": 6.9
+        },
+        {
+          "giocatore": "p7",
+          "lordo": 111,
+          "hcpEga": 17.9
+        }
+      ]
+    },
+    {
+      "id": "round3",
+      "numero": 3,
+      "nome": "Round 3",
+      "data": "2026-02-21",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p3",
+          "lordo": 77,
+          "hcpEga": 2
+        },
+        {
+          "giocatore": "p5",
+          "lordo": 82,
+          "hcpEga": 6.8
+        },
+        {
+          "giocatore": "p2",
+          "lordo": 83,
+          "hcpEga": 5.8
+        },
+        {
+          "giocatore": "p9",
+          "lordo": 87,
+          "hcpEga": 8.6
+        },
+        {
+          "giocatore": "p7",
+          "lordo": 97,
+          "hcpEga": 17.5,
+          "hcpGioco": 18
+        },
+        {
+          "giocatore": "p4",
+          "lordo": 85,
+          "hcpEga": 5.8
+        },
+        {
+          "giocatore": "p11",
+          "lordo": 89,
+          "hcpEga": 9.6
+        },
+        {
+          "giocatore": "p17",
+          "lordo": 89,
+          "hcpEga": 9
+        },
+        {
+          "giocatore": "p6",
+          "lordo": 87,
+          "hcpEga": 6.8
+        }
+      ]
+    },
+    {
+      "id": "round4",
+      "numero": 4,
+      "nome": "Round 4",
+      "data": "2026-02-28",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p3",
+          "lordo": 74,
+          "hcpEga": 2
+        },
+        {
+          "giocatore": "p5",
+          "lordo": 83,
+          "hcpEga": 6.8
+        },
+        {
+          "giocatore": "p2",
+          "lordo": 86,
+          "hcpEga": 5.8
+        },
+        {
+          "giocatore": "p4",
+          "lordo": 88,
+          "hcpEga": 5.8
+        },
+        {
+          "giocatore": "p22",
+          "lordo": 93,
+          "hcpEga": 10
+        },
+        {
+          "giocatore": "p11",
+          "lordo": 95,
+          "hcpEga": 9.6
+        },
+        {
+          "giocatore": "p19",
+          "lordo": 104,
+          "hcpEga": 18.8
+        },
+        {
+          "giocatore": "p7",
+          "lordo": 103,
+          "hcpEga": 17
+        },
+        {
+          "giocatore": "p12",
+          "lordo": 112,
+          "hcpEga": 26
+        },
+        {
+          "giocatore": "p17",
+          "lordo": 95,
+          "hcpEga": 9
+        },
+        {
+          "giocatore": "p9",
+          "lordo": 98,
+          "hcpEga": 8.9
+        }
+      ]
+    },
+    {
+      "id": "round5",
+      "numero": 5,
+      "nome": "Round 5",
+      "data": "2026-03-07",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p8",
+          "lordo": 77,
+          "hcpEga": 3.5,
+          "hcpGioco": 4
+        },
+        {
+          "giocatore": "p2",
+          "lordo": 81,
+          "hcpEga": 5.8
+        },
+        {
+          "giocatore": "p3",
+          "lordo": 77,
+          "hcpEga": 2
+        },
+        {
+          "giocatore": "p6",
+          "lordo": 82,
+          "hcpEga": 6.8
+        },
+        {
+          "giocatore": "p13",
+          "lordo": 89,
+          "hcpEga": 11.3
+        },
+        {
+          "giocatore": "p11",
+          "lordo": 90,
+          "hcpEga": 9.8
+        },
+        {
+          "giocatore": "p14",
+          "lordo": 80,
+          "hcpEga": 0
+        },
+        {
+          "giocatore": "p9",
+          "lordo": 91,
+          "hcpEga": 8.9
+        },
+        {
+          "giocatore": "p19",
+          "lordo": 103,
+          "hcpEga": 18.8
+        },
+        {
+          "giocatore": "p17",
+          "lordo": 94,
+          "hcpEga": 9
+        },
+        {
+          "giocatore": "p1",
+          "lordo": 101,
+          "hcpEga": 10.8
+        },
+        {
+          "giocatore": "p16",
+          "lordo": 112,
+          "hcpEga": 20.5,
+          "hcpGioco": 21
+        }
+      ]
+    },
+    {
+      "id": "round6",
+      "numero": 6,
+      "nome": "Round 6",
+      "data": "2026-03-14",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p3",
+          "hcpEga": 2,
+          "lordo": 74
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 10,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 8.9,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 9.8,
+          "lordo": 86
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 17.9,
+          "lordo": 97
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 26,
+          "lordo": 105
+        },
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 87
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.8,
+          "lordo": 93
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9,
+          "lordo": 96
+        },
+        {
+          "giocatore": "p19",
+          "hcpEga": 18.8,
+          "lordo": 111
+        },
+        {
+          "giocatore": "p6",
+          "hcpEga": 6.8,
+          "lordo": 100
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 6.9,
+          "lordo": 120
+        }
+      ]
+    },
+    {
+      "id": "round7",
+      "numero": 7,
+      "nome": "Round 7",
+      "data": "2026-03-21",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p5",
+          "hcpEga": 6.8,
+          "lordo": 75
+        },
+        {
+          "giocatore": "p14",
+          "hcpEga": 0,
+          "lordo": 72
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 2,
+          "lordo": 75
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 9.8,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p18",
+          "hcpEga": 1.3,
+          "lordo": 75
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.8,
+          "lordo": 89
+        },
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9,
+          "lordo": 87
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 8.6,
+          "lordo": 88
+        },
+        {
+          "giocatore": "p2",
+          "hcpEga": 5.8,
+          "lordo": 86
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 17.5,
+          "lordo": 104,
+          "hcpGioco": 18
+        },
+        {
+          "giocatore": "p13",
+          "hcpEga": 11.3,
+          "lordo": 120
+        }
+      ]
+    },
+    {
+      "id": "round8",
+      "numero": 8,
+      "nome": "Round 8",
+      "data": "2026-03-28",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 79
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 6.8,
+          "lordo": 82
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 2,
+          "lordo": 79
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 10,
+          "lordo": 89
+        },
+        {
+          "giocatore": "p8",
+          "hcpEga": 3.5,
+          "lordo": 83,
+          "hcpGioco": 4
+        },
+        {
+          "giocatore": "p10",
+          "hcpEga": 15.6,
+          "lordo": 95
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 17.5,
+          "lordo": 99,
+          "hcpGioco": 18
+        },
+        {
+          "giocatore": "p2",
+          "hcpEga": 5.8,
+          "lordo": 88
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9,
+          "lordo": 92
+        },
+        {
+          "giocatore": "p6",
+          "hcpEga": 6.8,
+          "lordo": 90
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 8.6,
+          "lordo": 96
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 26,
+          "lordo": 114
+        }
+      ]
+    },
+    {
+      "id": "round9",
+      "numero": 9,
+      "nome": "Round 9",
+      "data": "2026-04-04",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p3",
+          "hcpEga": 2,
+          "lordo": 74
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 10,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p6",
+          "hcpEga": 6.8,
+          "lordo": 81
+        },
+        {
+          "giocatore": "p13",
+          "hcpEga": 11.3,
+          "lordo": 85
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 8.6,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 9.6,
+          "lordo": 86
+        },
+        {
+          "giocatore": "p14",
+          "hcpEga": 0,
+          "lordo": 77
+        },
+        {
+          "giocatore": "p2",
+          "hcpEga": 5.4,
+          "lordo": 82
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 7,
+          "lordo": 100
+        }
+      ]
+    },
+    {
+      "id": "round10",
+      "numero": 10,
+      "nome": "Round 10",
+      "data": "2026-04-11",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p7",
+          "hcpEga": 17.5,
+          "lordo": 84,
+          "hcpGioco": 18
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 2,
+          "lordo": 69
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 7,
+          "lordo": 80
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 8.6,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p6",
+          "hcpEga": 6.8,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 9.6,
+          "lordo": 88
+        },
+        {
+          "giocatore": "p18",
+          "hcpEga": 1.3,
+          "lordo": 79
+        },
+        {
+          "giocatore": "p8",
+          "hcpEga": 3.5,
+          "lordo": 83,
+          "hcpGioco": 4
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 10,
+          "lordo": 90
+        },
+        {
+          "giocatore": "p2",
+          "hcpEga": 5.4,
+          "lordo": 87
+        },
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 88
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9,
+          "lordo": 92
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.8,
+          "lordo": 95
+        },
+        {
+          "giocatore": "p13",
+          "hcpEga": 11.3,
+          "lordo": 95
+        },
+        {
+          "giocatore": "p19",
+          "hcpEga": 18.8,
+          "lordo": 104
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 26,
+          "lordo": 120
+        }
+      ]
+    },
+    {
+      "id": "round11",
+      "numero": 11,
+      "nome": "Round 11",
+      "data": "2026-04-18",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p11",
+          "hcpEga": 9,
+          "lordo": 82
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 1.9,
+          "lordo": 77
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 17.5,
+          "lordo": 96,
+          "hcpGioco": 18
+        },
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 86
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 11.1,
+          "lordo": 91
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 8.6,
+          "lordo": 92
+        },
+        {
+          "giocatore": "p19",
+          "hcpEga": 19.7,
+          "lordo": 108
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 26,
+          "lordo": 114
+        }
+      ]
+    },
+    {
+      "id": "round12",
+      "numero": 12,
+      "nome": "Round 12",
+      "data": "2026-04-25",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p1",
+          "hcpEga": 11.1,
+          "lordo": 83
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 6.9,
+          "lordo": 79
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 8.6,
+          "lordo": 82
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 9.9,
+          "lordo": 83
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 17.5,
+          "lordo": 92,
+          "hcpGioco": 18
+        },
+        {
+          "giocatore": "p13",
+          "hcpEga": 11.3,
+          "lordo": 86
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 1.9,
+          "lordo": 80
+        },
+        {
+          "giocatore": "p18",
+          "hcpEga": 1.3,
+          "lordo": 79
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 9,
+          "lordo": 90
+        },
+        {
+          "giocatore": "p6",
+          "hcpEga": 6.7,
+          "lordo": 88
+        }
+      ]
+    },
+    {
+      "id": "round13",
+      "numero": 13,
+      "nome": "Round 13",
+      "data": "2026-05-09",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 77
+        },
+        {
+          "giocatore": "p6",
+          "hcpEga": 7.7,
+          "lordo": 81
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 8.6,
+          "lordo": 82
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 1.9,
+          "lordo": 78
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 16.4,
+          "lordo": 93
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.1,
+          "lordo": 95
+        }
+      ]
+    },
+    {
+      "id": "round14",
+      "numero": 14,
+      "nome": "Round 14",
+      "data": "2026-05-16",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p3",
+          "hcpEga": 1.5,
+          "lordo": 73,
+          "hcpGioco": 2
+        },
+        {
+          "giocatore": "p8",
+          "hcpEga": 3.5,
+          "lordo": 77,
+          "hcpGioco": 4
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 9.9,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 82
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.7,
+          "lordo": 88
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 16.6,
+          "lordo": 94
+        },
+        {
+          "giocatore": "p2",
+          "hcpEga": 7.2,
+          "lordo": 85
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 26,
+          "lordo": 104
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 9.2,
+          "lordo": 89
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 9.3,
+          "lordo": 89
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.1,
+          "lordo": 97
+        }
+      ]
+    },
+    {
+      "id": "round15",
+      "numero": 15,
+      "nome": "Round 15",
+      "data": "2026-05-23",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.8,
+          "lordo": 82
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 7.8,
+          "lordo": 79
+        },
+        {
+          "giocatore": "p6",
+          "hcpEga": 7.9,
+          "lordo": 79
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 9.2,
+          "lordo": 81
+        },
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 80
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 26,
+          "lordo": 101
+        },
+        {
+          "giocatore": "p14",
+          "hcpEga": 1.9,
+          "lordo": 78
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 9.9,
+          "lordo": 88
+        },
+        {
+          "giocatore": "p2",
+          "hcpEga": 7.2,
+          "lordo": 86
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.1,
+          "lordo": 92
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 16.5,
+          "lordo": 103,
+          "hcpGioco": 17
+        },
+        {
+          "giocatore": "p15",
+          "hcpEga": 8,
+          "lordo": 98
+        }
+      ]
+    },
+    {
+      "id": "round16",
+      "numero": 16,
+      "nome": "Round 16",
+      "data": "2026-05-30",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 77
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 9.9,
+          "lordo": 82
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 16.5,
+          "lordo": 91,
+          "hcpGioco": 17
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 9.2,
+          "lordo": 83
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.7,
+          "lordo": 87
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 9.2,
+          "lordo": 86
+        },
+        {
+          "giocatore": "p20",
+          "hcpEga": 14.1,
+          "lordo": 91
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 1.3,
+          "lordo": 79
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.1,
+          "lordo": 93
+        },
+        {
+          "giocatore": "p10",
+          "hcpEga": 15.6,
+          "lordo": 101
+        }
+      ]
+    },
+    {
+      "id": "round17",
+      "numero": 17,
+      "nome": "Round 17",
+      "data": "2026-06-14",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p3",
+          "hcpEga": 1.3,
+          "lordo": 70
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 9.2,
+          "lordo": 78
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.3,
+          "lordo": 80
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 8.8,
+          "lordo": 80
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 7.5,
+          "lordo": 79,
+          "hcpGioco": 8
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.3,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p16",
+          "hcpEga": 20.8,
+          "lordo": 108
+        },
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 86
+        },
+        {
+          "giocatore": "p19",
+          "hcpEga": 19.7,
+          "lordo": 101
+        },
+        {
+          "giocatore": "p10",
+          "hcpEga": 15.6,
+          "lordo": 104
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 16.6,
+          "lordo": 106
+        }
+      ]
+    },
+    {
+      "id": "round18",
+      "numero": 18,
+      "nome": "Round 18",
+      "data": "2026-06-20",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 77
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.3,
+          "lordo": 81
+        },
+        {
+          "giocatore": "p2",
+          "hcpEga": 8,
+          "lordo": 80
+        },
+        {
+          "giocatore": "p6",
+          "hcpEga": 8.3,
+          "lordo": 82
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 1.3,
+          "lordo": 76
+        },
+        {
+          "giocatore": "p8",
+          "hcpEga": 3.5,
+          "lordo": 79,
+          "hcpGioco": 4
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.1,
+          "lordo": 88
+        },
+        {
+          "giocatore": "p19",
+          "hcpEga": 19.7,
+          "lordo": 100
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 9.2,
+          "lordo": 89
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 16.6,
+          "lordo": 98
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 7.5,
+          "lordo": 100,
+          "hcpGioco": 8
+        }
+      ]
+    },
+    {
+      "id": "round19",
+      "numero": 19,
+      "nome": "Round 19",
+      "data": "2026-06-27",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 78
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 8.7,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p15",
+          "hcpEga": 8,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 25,
+          "lordo": 102
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 10.1,
+          "lordo": 88
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 16.6,
+          "lordo": 96
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.1,
+          "lordo": 92
+        },
+        {
+          "giocatore": "p10",
+          "hcpEga": 15.6,
+          "lordo": 106
+        }
+      ]
+    },
+    {
+      "id": "round20",
+      "numero": 20,
+      "nome": "Round 20",
+      "data": "2026-07-04",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p6",
+          "hcpEga": 8.3,
+          "lordo": 80
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 6.8,
+          "lordo": 83
+        },
+        {
+          "giocatore": "p15",
+          "hcpEga": 8,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 25,
+          "lordo": 101
+        },
+        {
+          "giocatore": "p13",
+          "hcpEga": 11.3,
+          "lordo": 88
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.3,
+          "lordo": 87
+        },
+        {
+          "giocatore": "p2",
+          "hcpEga": 8,
+          "lordo": 85
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.1,
+          "lordo": 86
+        },
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 85
+        },
+        {
+          "giocatore": "p19",
+          "hcpEga": 19.7,
+          "lordo": 100
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 17,
+          "lordo": 98
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 8.8,
+          "lordo": 91
+        },
+        {
+          "giocatore": "p10",
+          "hcpEga": 15.6,
+          "lordo": 106
+        }
+      ]
+    },
+    {
+      "id": "round21",
+      "numero": 21,
+      "nome": "Round 21",
+      "data": "2026-07-11",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p6",
+          "hcpEga": 8.3,
+          "lordo": 78
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 25,
+          "lordo": 98
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.3,
+          "lordo": 83
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 1.1,
+          "lordo": 74
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 6.8,
+          "lordo": 80
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 8.8,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p2",
+          "hcpEga": 8,
+          "lordo": 87
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 9.4,
+          "lordo": 89
+        },
+        {
+          "giocatore": "p8",
+          "hcpEga": 3.5,
+          "lordo": 84,
+          "hcpGioco": 4
+        },
+        {
+          "giocatore": "p19",
+          "hcpEga": 19.7,
+          "lordo": 103
+        },
+        {
+          "giocatore": "p15",
+          "hcpEga": 8,
+          "lordo": 91
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.1,
+          "lordo": 93
+        },
+        {
+          "giocatore": "p10",
+          "hcpEga": 15.6,
+          "lordo": 102
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 17,
+          "lordo": 103
+        }
+      ]
+    },
+    {
+      "id": "round22",
+      "numero": 22,
+      "nome": "Round 22",
+      "data": "2026-07-18",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p13",
+          "hcpEga": 11.3,
+          "lordo": 76
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 1.1,
+          "lordo": 75
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 9.3,
+          "lordo": 85
+        },
+        {
+          "giocatore": "p7",
+          "hcpEga": 17,
+          "lordo": 95
+        },
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 84
+        },
+        {
+          "giocatore": "p10",
+          "hcpEga": 15.6,
+          "lordo": 94
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 10.3,
+          "lordo": 90
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 25,
+          "lordo": 106
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.1,
+          "lordo": 91
+        }
+      ]
+    },
+    {
+      "id": "round23",
+      "numero": 23,
+      "nome": "Round 23",
+      "data": "2026-07-25",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p7",
+          "hcpEga": 16.8,
+          "lordo": 85
+        },
+        {
+          "giocatore": "p2",
+          "hcpEga": 7.5,
+          "lordo": 79,
+          "hcpGioco": 8
+        },
+        {
+          "giocatore": "p4",
+          "hcpEga": 5.8,
+          "lordo": 78
+        },
+        {
+          "giocatore": "p22",
+          "hcpEga": 9.3,
+          "lordo": 83
+        },
+        {
+          "giocatore": "p3",
+          "hcpEga": 1,
+          "lordo": 77
+        },
+        {
+          "giocatore": "p17",
+          "hcpEga": 9.1,
+          "lordo": 86
+        },
+        {
+          "giocatore": "p12",
+          "hcpEga": 25,
+          "lordo": 102
+        },
+        {
+          "giocatore": "p13",
+          "hcpEga": 10.8,
+          "lordo": 91
+        },
+        {
+          "giocatore": "p11",
+          "hcpEga": 8.8,
+          "lordo": 90
+        },
+        {
+          "giocatore": "p6",
+          "hcpEga": 8.8,
+          "lordo": 90
+        },
+        {
+          "giocatore": "p19",
+          "hcpEga": 19.7,
+          "lordo": 103
+        },
+        {
+          "giocatore": "p15",
+          "hcpEga": 8,
+          "lordo": 91
+        },
+        {
+          "giocatore": "p9",
+          "hcpEga": 8.7,
+          "lordo": 95
+        },
+        {
+          "giocatore": "p1",
+          "hcpEga": 9.6,
+          "lordo": 98
+        },
+        {
+          "giocatore": "p5",
+          "hcpEga": 6.3,
+          "lordo": 100
+        }
+      ]
+    },
+    {
+      "id": "round24",
+      "numero": 24,
+      "nome": "Round 24",
+      "data": "2026-08-01",
+      "formato": "Medal",
+      "buca": 18,
+      "quota": 0,
+      "risultati": [
+        {
+          "giocatore": "p5",
+          "lordo": 79
+        },
+        {
+          "giocatore": "p12",
+          "lordo": 97
+        },
+        {
+          "giocatore": "p11",
+          "lordo": 83
+        },
+        {
+          "giocatore": "p6",
+          "lordo": 82
+        },
+        {
+          "giocatore": "p17",
+          "lordo": 85
+        },
+        {
+          "giocatore": "p3",
+          "lordo": 76
+        },
+        {
+          "giocatore": "p19",
+          "lordo": 96
+        },
+        {
+          "giocatore": "p1",
+          "lordo": 87
+        },
+        {
+          "giocatore": "p7",
+          "lordo": 94
+        },
+        {
+          "giocatore": "p4",
+          "lordo": 84
+        },
+        {
+          "giocatore": "p2",
+          "lordo": 87
+        }
+      ]
+    }
+  ],
+  "prossimeGare": [
+    {
+      "nome": "Round 27",
+      "data": "2026-08-15",
+      "teeTime": "09:12",
+      "formato": "Scramble a squadre",
+      "note": "Iscrizioni aperte, quota 25€ a squadra"
+    },
+    {
+      "nome": "Round 28",
+      "data": "2026-09-27",
+      "teeTime": "08:30",
+      "formato": "Stableford individuale",
+      "note": "Da confermare numero buche"
+    }
+  ],
+  "moneyList": [],
+  "premi": {
+    "unita": "Scatolette Titleist ProV1",
+    "tabella": [
+      {
+        "giocatori": 3,
+        "flight": 1,
+        "scatolette": 2,
+        "primo": 2,
+        "secondo": 0,
+        "terzo": 0,
+        "quarto": 0
+      },
+      {
+        "giocatori": 4,
+        "flight": 1,
+        "scatolette": 3,
+        "primo": 2,
+        "secondo": 1,
+        "terzo": 0,
+        "quarto": 0
+      },
+      {
+        "giocatori": 5,
+        "flight": 2,
+        "scatolette": 3,
+        "primo": 2,
+        "secondo": 1,
+        "terzo": 0,
+        "quarto": 0
+      },
+      {
+        "giocatori": 6,
+        "flight": 2,
+        "scatolette": 4,
+        "primo": 3,
+        "secondo": 1,
+        "terzo": 0,
+        "quarto": 0
+      },
+      {
+        "giocatori": 7,
+        "flight": 2,
+        "scatolette": 5,
+        "primo": 3,
+        "secondo": 2,
+        "terzo": 0,
+        "quarto": 0
+      },
+      {
+        "giocatori": 8,
+        "flight": 2,
+        "scatolette": 6,
+        "primo": 4,
+        "secondo": 2,
+        "terzo": 0,
+        "quarto": 0
+      },
+      {
+        "giocatori": 9,
+        "flight": 3,
+        "scatolette": 6,
+        "primo": 3,
+        "secondo": 2,
+        "terzo": 1,
+        "quarto": 0
+      },
+      {
+        "giocatori": 10,
+        "flight": 3,
+        "scatolette": 7,
+        "primo": 4,
+        "secondo": 2,
+        "terzo": 1,
+        "quarto": 0
+      },
+      {
+        "giocatori": 11,
+        "flight": 3,
+        "scatolette": 8,
+        "primo": 5,
+        "secondo": 2,
+        "terzo": 1,
+        "quarto": 0
+      },
+      {
+        "giocatori": 12,
+        "flight": 3,
+        "scatolette": 9,
+        "primo": 5,
+        "secondo": 3,
+        "terzo": 1,
+        "quarto": 0
+      },
+      {
+        "giocatori": 13,
+        "flight": 4,
+        "scatolette": 9,
+        "primo": 5,
+        "secondo": 2,
+        "terzo": 1,
+        "quarto": 1
+      },
+      {
+        "giocatori": 14,
+        "flight": 4,
+        "scatolette": 10,
+        "primo": 5,
+        "secondo": 3,
+        "terzo": 1,
+        "quarto": 1
+      },
+      {
+        "giocatori": 15,
+        "flight": 4,
+        "scatolette": 11,
+        "primo": 5,
+        "secondo": 3,
+        "terzo": 2,
+        "quarto": 1
+      },
+      {
+        "giocatori": 16,
+        "flight": 4,
+        "scatolette": 12,
+        "primo": 6,
+        "secondo": 3,
+        "terzo": 2,
+        "quarto": 1
+      }
+    ]
+  },
+  "extraBet": {
+    "unita": "Extra Bet ProV1",
+    "tabella": [
+      {
+        "giocatori": 3,
+        "primo": 2,
+        "secondo": 0,
+        "terzo": 0,
+        "paganti": 2
+      },
+      {
+        "giocatori": 4,
+        "primo": 2,
+        "secondo": "franco",
+        "terzo": 0,
+        "paganti": 2
+      },
+      {
+        "giocatori": 5,
+        "primo": 2,
+        "secondo": 1,
+        "terzo": 0,
+        "paganti": 3
+      },
+      {
+        "giocatori": 6,
+        "primo": 3,
+        "secondo": 1,
+        "terzo": 0,
+        "paganti": 4
+      },
+      {
+        "giocatori": 7,
+        "primo": 3,
+        "secondo": 1,
+        "terzo": "franco",
+        "paganti": 4
+      },
+      {
+        "giocatori": 8,
+        "primo": 3,
+        "secondo": 2,
+        "terzo": "franco",
+        "paganti": 5
+      },
+      {
+        "giocatori": 9,
+        "primo": 4,
+        "secondo": 2,
+        "terzo": "franco",
+        "paganti": 6
+      },
+      {
+        "giocatori": 10,
+        "primo": 4,
+        "secondo": 2,
+        "terzo": 1,
+        "paganti": 7
+      }
+    ]
+  },
+  "galleria": [
+    {
+      "titolo": "Allenamento driving range",
+      "descrizione": "Sabato mattina",
+      "colore": "#1B3428"
+    },
+    {
+      "titolo": "Cena fine anno",
+      "descrizione": "Le Vigne, Cormons",
+      "foto": "img/galleria/cena-fine-anno-2025.jpeg"
+    },
+    {
+      "titolo": "Prima neve sul campo",
+      "descrizione": "Gennaio, campo chiuso",
+      "colore": "#5C6B6B"
+    }
+  ],
+  "statuto": []
+}

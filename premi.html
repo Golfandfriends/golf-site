@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){
+  var ROLE_KEY='gfRole';
+  var role = localStorage.getItem(ROLE_KEY);
+  if (role !== 'player' && role !== 'admin') {
+    location.replace('login.html?next=' + encodeURIComponent(location.pathname + location.search));
+  } else {
+    window.addEventListener('DOMContentLoaded', function(){
+      var btn = document.createElement('a');
+      btn.href = '#';
+      btn.textContent = role === 'admin' ? 'Esci (admin)' : 'Esci';
+      btn.setAttribute('style','position:fixed;bottom:12px;right:12px;background:#001e3c;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-family:Inter,sans-serif;text-decoration:none;z-index:9999;opacity:0.85;');
+      btn.onclick = function(e){
+        e.preventDefault();
+        localStorage.removeItem(ROLE_KEY);
+        location.href='login.html';
+      };
+      document.body.appendChild(btn);
+    });
+  }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabella Premi — Golf & Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=45">
+</head>
+<body class="turf-bg">
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="img/logo.svg" class="brand-icon" alt="Golf &amp; Friends"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="classifica.html">Classifica gare</a>
+      <a href="calendario.html">Calendario</a>
+      <a href="money-list.html">Money List</a>
+      <a href="premi.html">Tab Premi</a>
+      <a href="giocatori.html">Giocatori</a>
+      <a href="statistiche.html">Statistiche</a>
+      <a href="galleria.html">Galleria</a>
+      <a href="statuto.html">Statuto</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding:32px 0 8px;">
+  <div class="wrap" style="padding-bottom:0;">
+    <span class="eyebrow" style="color:#000;">Titleist ProV1</span>
+    <h1 style="font-size:2.2rem;">Tabella Premi</h1>
+    <p class="lede">Inserisci i giocatori e ottieni subito la suddivisione dei premi.</p>
+  </div>
+</header>
+
+<main class="wrap" style="padding-top:8px;">
+
+  <section class="card">
+    <div class="card-header">
+      <h3>Calcolatore</h3>
+      <span class="meta">da 3 a 16 giocatori</span>
+    </div>
+    <div class="card-body">
+      <label for="input-giocatori" style="display:block; font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px;">
+        Numero di giocatori iscritti
+      </label>
+      <div class="flex" style="margin-bottom:18px;">
+        <input type="number" id="input-giocatori" min="3" max="16" value="8"
+          style="font-family:var(--font-mono); font-size:1.1rem; padding:10px 14px; border-radius:6px; border:1px solid var(--ink-soft); width:100px;">
+        <button class="btn btn-primary" id="btn-calcola" type="button">Calcola</button>
+      </div>
+      <div id="risultato-calcolo"></div>
+    </div>
+  </section>
+
+  <div class="section-title">
+    <h2>Tabella completa</h2>
+  </div>
+  <section class="card">
+    <div class="card-body">
+      <table class="scorecard" id="tabella-premi">
+        <thead>
+          <tr>
+            <th class="num">Giocatori</th>
+            <th class="num">Flight</th>
+            <th class="num">Scatolette</th>
+            <th class="num">1°</th>
+            <th class="num">2°</th>
+            <th class="num">3°</th>
+            <th class="num">4°</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="muted" style="margin-top:14px; margin-bottom:0; font-size:0.82rem;">
+        Fuori da questo intervallo (meno di 3 o più di 16 giocatori) la suddivisione va decisa caso per caso nel gruppo.
+      </p>
+    </div>
+  </section>
+  <div class="section-title">
+    <h2>Extra Bet ProV1</h2>
+  </div>
+  <section class="card">
+    <div class="card-header">
+      <h3>Calcolatore Extra Bet</h3>
+      <span class="meta">da 3 a 10 giocatori</span>
+    </div>
+    <div class="card-body">
+      <label for="input-giocatori-extra" style="display:block; font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px;">
+        Numero di giocatori iscritti
+      </label>
+      <div class="flex" style="margin-bottom:18px;">
+        <input type="number" id="input-giocatori-extra" min="3" max="10" value="8"
+          style="font-family:var(--font-mono); font-size:1.1rem; padding:10px 14px; border-radius:6px; border:1px solid var(--ink-soft); width:100px;">
+        <button class="btn btn-primary" id="btn-calcola-extra" type="button">Calcola</button>
+      </div>
+      <div id="risultato-calcolo-extra"></div>
+    </div>
+  </section>
+
+  <div class="section-title">
+    <h2>Tabella Extra Bet completa</h2>
+  </div>
+  <section class="card">
+    <div class="card-body">
+      <table class="scorecard" id="tabella-extra-bet">
+        <thead>
+          <tr>
+            <th class="num">Giocatori</th>
+            <th class="num">Primo</th>
+            <th class="num">Secondo</th>
+            <th class="num">Terzo</th>
+            <th class="num">Paganti</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="muted" style="margin-top:14px; margin-bottom:0; font-size:0.82rem;">
+        "Franco" = quella posizione non vince nulla, ma è esente dal pagare la quota.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Golf & Friends — sito del gruppo, gestito tra amici.</span>
+    <span>Dati modificabili in <code>/data/data.json</code></span>
+  </div>
+</footer>
+
+<script src="js/common.js?v=45"></script>
+<script>
+(async function () {
+  const data = await loadData();
+  const tabella = data.premi.tabella;
+
+  // Tabella completa
+  const tbody = document.querySelector("#tabella-premi tbody");
+  tbody.innerHTML = tabella
+    .map(
+      (r) => `
+    <tr>
+      <td class="num">${r.giocatori}</td>
+      <td class="num">${r.flight}</td>
+      <td class="num">${r.scatolette}</td>
+      <td class="num">${r.primo}</td>
+      <td class="num">${r.secondo}</td>
+      <td class="num">${r.terzo}</td>
+      <td class="num">${r.quarto}</td>
+    </tr>`
+    )
+    .join("");
+
+  // Calcolatore
+  function calcola() {
+    const n = parseInt(document.getElementById("input-giocatori").value, 10);
+    const out = document.getElementById("risultato-calcolo");
+    const riga = tabella.find((r) => r.giocatori === n);
+
+    if (!n || n < 3 || n > 16) {
+      out.innerHTML = `<div class="empty-state">Inserisci un numero di giocatori tra 3 e 16.</div>`;
+      return;
+    }
+
+    const posizioni = [
+      { label: "1° posto", val: riga.primo },
+      { label: "2° posto", val: riga.secondo },
+      { label: "3° posto", val: riga.terzo },
+      { label: "4° posto", val: riga.quarto },
+    ].filter((p) => p.val > 0);
+
+    out.innerHTML = `
+      <div class="grid grid-3" style="margin-bottom:16px;">
+        <div class="stat-tile"><span class="num">${riga.flight}</span><span class="label">Flight</span></div>
+        <div class="stat-tile"><span class="num">${riga.scatolette}</span><span class="label">Scatolette totali ProV1</span></div>
+        <div class="stat-tile"><span class="num">${posizioni.length}</span><span class="label">Posizioni premiate</span></div>
+      </div>
+      <table class="scorecard">
+        <thead><tr><th>Posizione</th><th class="num">Scatolette</th></tr></thead>
+        <tbody>
+          ${posizioni
+            .map(
+              (p, i) => `<tr class="pos-${i + 1}"><td class="pos">${p.label}</td><td class="num">${p.val}</td></tr>`
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  document.getElementById("btn-calcola").addEventListener("click", calcola);
+  document.getElementById("input-giocatori").addEventListener("keyup", (e) => {
+    if (e.key === "Enter") calcola();
+  });
+  calcola();
+
+  // ---- Extra Bet ProV1 ----
+  const tabellaExtra = data.extraBet.tabella;
+
+  function formatValoreExtra(v) {
+    return v === "franco" ? `<span class="pill">Franco</span>` : v;
+  }
+
+  const tbodyExtra = document.querySelector("#tabella-extra-bet tbody");
+  tbodyExtra.innerHTML = tabellaExtra
+    .map(
+      (r) => `
+    <tr>
+      <td class="num">${r.giocatori}</td>
+      <td class="num">${formatValoreExtra(r.primo)}</td>
+      <td class="num">${formatValoreExtra(r.secondo)}</td>
+      <td class="num">${formatValoreExtra(r.terzo)}</td>
+      <td class="num">${r.paganti}</td>
+    </tr>`
+    )
+    .join("");
+
+  function calcolaExtra() {
+    const n = parseInt(document.getElementById("input-giocatori-extra").value, 10);
+    const out = document.getElementById("risultato-calcolo-extra");
+    const riga = tabellaExtra.find((r) => r.giocatori === n);
+
+    if (!n || n < 3 || n > 10) {
+      out.innerHTML = `<div class="empty-state">Inserisci un numero di giocatori tra 3 e 10.</div>`;
+      return;
+    }
+
+    const posizioni = [
+      { label: "1° posto", val: riga.primo },
+      { label: "2° posto", val: riga.secondo },
+      { label: "3° posto", val: riga.terzo },
+    ].filter((p) => p.val !== 0);
+
+    out.innerHTML = `
+      <div class="grid grid-3" style="margin-bottom:16px;">
+        <div class="stat-tile"><span class="num">${riga.paganti}</span><span class="label">Giocatori paganti</span></div>
+        <div class="stat-tile"><span class="num">${n - riga.paganti}</span><span class="label">Esenti (Franco)</span></div>
+        <div class="stat-tile"><span class="num">${posizioni.length}</span><span class="label">Posizioni premiate</span></div>
+      </div>
+      <table class="scorecard">
+        <thead><tr><th>Posizione</th><th class="num">Extra Bet</th></tr></thead>
+        <tbody>
+          ${posizioni
+            .map(
+              (p, i) => `<tr class="pos-${i + 1}"><td class="pos">${p.label}</td><td class="num">${formatValoreExtra(p.val)}</td></tr>`
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  document.getElementById("btn-calcola-extra").addEventListener("click", calcolaExtra);
+  document.getElementById("input-giocatori-extra").addEventListener("keyup", (e) => {
+    if (e.key === "Enter") calcolaExtra();
+  });
+  calcolaExtra();
+})();
+</script>
+</body>
+</html>
