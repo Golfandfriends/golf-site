@@ -1,13 +1,82 @@
 // ============================================================
 // Golf & Friends — utility condivise tra tutte le pagine
 // ============================================================
+//
+// NOVITÀ: i dati ora arrivano da Firebase (Firestore) invece che dal
+// vecchio file data/data.json. La funzione loadData() qui sotto
+// ricostruisce un oggetto "data" con ESATTAMENTE la stessa forma di
+// prima (data.giocatori, data.gare, data.club, data.premi, ...), così
+// tutto il resto del codice in questa pagina e nelle altre continua a
+// funzionare senza bisogno di modifiche.
 
-const DATA_URL = "data/data.json";
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBaJXWvZNRwEDhWPGLrqUDFY2lZ19UyUyo",
+  authDomain: "golf-friends-lignano.firebaseapp.com",
+  projectId: "golf-friends-lignano",
+  storageBucket: "golf-friends-lignano.firebasestorage.app",
+  messagingSenderId: "375170769411",
+  appId: "1:375170769411:web:38e47294d63225ffc16436",
+  measurementId: "G-LQJCX7TZSS",
+};
+
+let _dbPromise = null;
+
+// Carica l'SDK Firebase (via CDN, "import" dinamico: funziona anche
+// dentro un normale <script>, non serve dichiarare type="module").
+// Lo fa una volta sola e poi riusa sempre la stessa connessione.
+function getFirestoreHandles() {
+  if (_dbPromise) return _dbPromise;
+  _dbPromise = (async () => {
+    const { initializeApp } = await import(
+      "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"
+    );
+    const { getFirestore, collection, getDocs, doc, getDoc } = await import(
+      "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js"
+    );
+    const app = initializeApp(FIREBASE_CONFIG);
+    const db = getFirestore(app);
+    return { db, collection, getDocs, doc, getDoc };
+  })();
+  return _dbPromise;
+}
 
 async function loadData() {
-  const res = await fetch(DATA_URL, { cache: "no-store" });
-  if (!res.ok) throw new Error("Impossibile caricare data.json");
-  return res.json();
+  const { db, collection, getDocs, doc, getDoc } = await getFirestoreHandles();
+
+  const [giocatoriSnap, gareSnap, prossimeSnap, galleriaSnap, clubDoc, premiDoc, extraBetDoc] =
+    await Promise.all([
+      getDocs(collection(db, "giocatori")),
+      getDocs(collection(db, "gare")),
+      getDocs(collection(db, "prossimeGare")),
+      getDocs(collection(db, "galleria")),
+      getDoc(doc(db, "info", "club")),
+      getDoc(doc(db, "info", "premi")),
+      getDoc(doc(db, "info", "extraBet")),
+    ]);
+
+  const giocatori = giocatoriSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+
+  const gare = gareSnap.docs
+    .map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => (a.numero || 0) - (b.numero || 0));
+
+  const prossimeGare = prossimeSnap.docs
+    .map((d) => d.data())
+    .sort((a, b) => (a.data || "").localeCompare(b.data || ""));
+
+  const galleria = galleriaSnap.docs.map((d) => d.data());
+
+  return {
+    club: clubDoc.exists() ? clubDoc.data() : {},
+    giocatori,
+    gare,
+    prossimeGare,
+    moneyList: [],
+    premi: premiDoc.exists() ? premiDoc.data() : { unita: "", tabella: [] },
+    extraBet: extraBetDoc.exists() ? extraBetDoc.data() : { unita: "", tabella: [] },
+    galleria,
+    statuto: [],
+  };
 }
 
 function playerName(data, id) {
@@ -125,7 +194,7 @@ function hcpGioco(hcpEga) {
 // Netto = Lordo - HCP di gioco (calcolato dall'HCP EGA del giocatore).
 // Ordina per netto crescente (vince chi fa meno colpi netti). In caso di
 // pari netto, NON esiste pari merito: vince chi è stato inserito prima
-// nell'elenco "risultati" della gara in data.json. È compito di chi inserisce
+// nell'elenco "risultati" della gara. È compito di chi inserisce
 // i dati decidere l'ordine in caso di parità, applicando le regole del golf
 // (es. countback sulle ultime 9 buche) — il sito si limita a rispettare
 // l'ordine che gli viene dato.
