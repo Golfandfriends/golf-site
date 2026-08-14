@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pannello Admin — Golf & Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=45">
+<style>
+  /* ---------- Login ---------- */
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .login-card { max-width: 380px; width: 100%; }
+  .login-card .card-body { display: flex; flex-direction: column; gap: 14px; }
+  .login-logo { display: flex; justify-content: center; margin-bottom: 6px; }
+  .login-logo img { width: 72px; height: 72px; }
+  .login-card h1 {
+    font-size: 1.15rem;
+    text-align: center;
+    margin: 0 0 4px;
+    color: var(--navy-deep);
+  }
+  .login-card p.lede {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+    margin: 0 0 8px;
+  }
+  .login-card input[type="email"],
+  .login-card input[type="password"] {
+    padding: 11px 14px;
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .login-card input:focus {
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+  }
+  .login-error {
+    color: var(--danger);
+    font-size: 0.85rem;
+    text-align: center;
+    min-height: 1.1em;
+  }
+  .login-card .btn { width: 100%; justify-content: center; }
+
+  /* ---------- Admin topbar ---------- */
+  #admin-view .site-nav .wrap { height: auto; padding: 14px 24px; }
+  .admin-user {
+    color: #fff;
+    font-size: 0.8rem;
+    opacity: 0.85;
+    margin-right: 14px;
+  }
+  .btn-nav-outline {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.45);
+  }
+  .btn-nav-outline:hover { background: rgba(255,255,255,0.12); }
+
+  /* ---------- Form fields (reuso lo stile del login) ---------- */
+  #admin-view label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 14px 0 6px;
+  }
+  #admin-view label:first-child { margin-top: 0; }
+  #admin-view input[type="text"],
+  #admin-view input[type="number"],
+  #admin-view input[type="date"] {
+    padding: 11px 14px;
+    border: 1px solid var(--blue-line);
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--white);
+  }
+  #admin-view input:focus {
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+  }
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) {
+    .form-row-3 { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ---------- Player list ---------- */
+  #player-search { margin-bottom: 4px; }
+  .player-list { border-top: 1px solid var(--blue-line); }
+  .player-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--blue-line);
+  }
+  .player-row.hidden-by-search { display: none; }
+  .player-row .pname {
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--ink);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .player-row .phcp {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    margin-left: 6px;
+    font-weight: 400;
+  }
+  .player-row input[type="number"] {
+    width: 78px;
+    text-align: center;
+    padding: 9px 6px;
+    flex-shrink: 0;
+  }
+  .player-row.filled { background: var(--blue-tint); }
+
+  /* ---------- Messaggi ---------- */
+  .ok-msg { color: var(--rolex-green); font-size: 0.9rem; margin-top: 14px; font-weight: 600; }
+  .error-msg { color: var(--danger); font-size: 0.9rem; margin-top: 14px; font-weight: 600; }
+
+  /* ---------- Barra salva fissa (mobile-friendly) ---------- */
+  .submit-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-top: 1px solid var(--blue-line);
+    padding: 12px 24px calc(12px + env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 10px rgba(10,30,50,0.08);
+    z-index: 30;
+  }
+  .submit-bar .wrap { padding: 0; max-width: 640px; }
+  .submit-bar .btn { width: 100%; justify-content: center; }
+
+  #admin-view main.wrap { max-width: 640px; padding-bottom: 110px; }
+
+  [hidden] { display: none !important; }
+
+  .spinner {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border: 2px solid rgba(255,255,255,0.5);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: -2px;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body class="turf-bg">
+
+<!-- ===================== LOGIN ===================== -->
+<div id="login-view">
+  <div class="login-wrap">
+    <div class="card login-card">
+      <div class="card-body">
+        <div class="login-logo"><img src="img/logo.svg" alt="Golf & Friends"></div>
+        <h1>Pannello Admin</h1>
+        <p class="lede">Accesso riservato — inserisci le tue credenziali</p>
+        <form id="login-form">
+          <input type="email" id="login-email" placeholder="Email" autocomplete="username" autofocus required>
+          <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" required>
+          <div class="login-error" id="login-error"></div>
+          <button type="submit" class="btn btn-primary" id="login-btn" style="margin-top:6px;">Accedi</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ADMIN PANEL ===================== -->
+<div id="admin-view" hidden>
+  <nav class="site-nav">
+    <div class="wrap">
+      <a class="brand" href="index.html"><img src="img/logo.svg" class="brand-icon" alt="Golf & Friends"></a>
+      <div class="flex" style="align-items:center;">
+        <span class="admin-user" id="user-email"></span>
+        <button class="btn btn-nav-outline" id="logout-btn">Esci</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="wrap" style="padding-top:32px;">
+
+    <div class="section-title tight">
+      <h2>Nuova gara</h2>
+    </div>
+    <section class="card">
+      <div class="card-body">
+        <div class="form-row-2">
+          <div>
+            <label for="f-numero">Numero</label>
+            <input type="number" id="f-numero" min="1" required>
+          </div>
+          <div>
+            <label for="f-data">Data</label>
+            <input type="date" id="f-data" required>
+          </div>
+        </div>
+
+        <label for="f-nome">Nome gara</label>
+        <input type="text" id="f-nome" required>
+
+        <div class="form-row-3">
+          <div>
+            <label for="f-formato">Formato</label>
+            <input type="text" id="f-formato" list="formati-list">
+            <datalist id="formati-list">
+              <option value="Medal"></option>
+              <option value="Stableford individuale"></option>
+              <option value="Scramble a squadre"></option>
+              <option value="Foursome"></option>
+            </datalist>
+          </div>
+          <div>
+            <label for="f-buca">Buche</label>
+            <input type="number" id="f-buca" min="1" value="18">
+          </div>
+          <div>
+            <label for="f-quota">Quota €</label>
+            <input type="number" id="f-quota" min="0" step="0.5" value="0">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-title tight">
+      <h2>Punteggi lordi <span class="pill gold" id="filled-count">0</span></h2>
+    </div>
+    <section class="card">
+      <div class="card-body">
+        <p class="muted" style="margin-top:0; font-size:0.85rem;">Inserisci il punteggio lordo solo per chi ha giocato questa gara. Lascia vuoto chi non ha giocato.</p>
+
+        <label for="player-search" style="margin-top:0;">Cerca</label>
+        <input type="text" id="player-search" placeholder="Cerca giocatore...">
+
+        <div class="player-list" id="player-list">
+          <p class="muted" id="players-loading" style="padding:14px 0;">Caricamento giocatori...</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="ok-msg" id="save-ok"></div>
+    <div class="error-msg" id="save-error"></div>
+
+  </main>
+
+  <div class="submit-bar">
+    <div class="wrap">
+      <button class="btn btn-primary" id="save-btn">Salva gara</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+  import {
+    getFirestore, collection, getDocs, addDoc
+  } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyBaJXWvZNRwEDhWPGLrqUDFY2lZ19UyUyo",
+    authDomain: "golf-friends-lignano.firebaseapp.com",
+    projectId: "golf-friends-lignano",
+    storageBucket: "golf-friends-lignano.firebasestorage.app",
+    messagingSenderId: "375170769411",
+    appId: "1:375170769411:web:38e47294d63225ffc16436",
+    measurementId: "G-LQJCX7TZSS",
+  };
+
+  const app = initializeApp(FIREBASE_CONFIG);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const loginView = document.getElementById("login-view");
+  const adminView = document.getElementById("admin-view");
+  const loginForm = document.getElementById("login-form");
+  const loginBtn = document.getElementById("login-btn");
+  const loginError = document.getElementById("login-error");
+  const logoutBtn = document.getElementById("logout-btn");
+  const userEmailEl = document.getElementById("user-email");
+
+  const fNumero = document.getElementById("f-numero");
+  const fData = document.getElementById("f-data");
+  const fNome = document.getElementById("f-nome");
+  const fFormato = document.getElementById("f-formato");
+  const fBuca = document.getElementById("f-buca");
+  const fQuota = document.getElementById("f-quota");
+
+  const playerSearch = document.getElementById("player-search");
+  const playerListEl = document.getElementById("player-list");
+  const filledCountEl = document.getElementById("filled-count");
+  const saveBtn = document.getElementById("save-btn");
+  const saveOk = document.getElementById("save-ok");
+  const saveError = document.getElementById("save-error");
+
+  let players = [];
+  let playersLoaded = false;
+
+  // ---------- Login / logout ----------
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    loginError.textContent = "";
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Accesso in corso...";
+    const email = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // onAuthStateChanged si occupa del resto
+    } catch (err) {
+      loginError.textContent = messaggioErroreLogin(err.code);
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Accedi";
+    }
+  });
+
+  function messaggioErroreLogin(code) {
+    switch (code) {
+      case "auth/invalid-email":
+        return "Email non valida.";
+      case "auth/user-not-found":
+      case "auth/invalid-credential":
+      case "auth/wrong-password":
+        return "Email o password non corrette.";
+      case "auth/too-many-requests":
+        return "Troppi tentativi. Riprova tra qualche minuto.";
+      default:
+        return "Errore di accesso. Riprova.";
+    }
+  }
+
+  logoutBtn.addEventListener("click", () => signOut(auth));
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loginView.hidden = true;
+      adminView.hidden = false;
+      userEmailEl.textContent = user.email;
+      if (!playersLoaded) initForm();
+    } else {
+      loginView.hidden = false;
+      adminView.hidden = true;
+      loginForm.reset();
+      playersLoaded = false;
+    }
+  });
+
+  // ---------- Caricamento dati iniziali ----------
+  async function initForm() {
+    fData.value = new Date().toISOString().slice(0, 10);
+
+    try {
+      const [giocatoriSnap, gareSnap] = await Promise.all([
+        getDocs(collection(db, "giocatori")),
+        getDocs(collection(db, "gare")),
+      ]);
+
+      players = giocatoriSnap.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => a.nome.localeCompare(b.nome, "it"));
+
+      const numeriEsistenti = gareSnap.docs
+        .map((d) => d.data().numero)
+        .filter((n) => typeof n === "number");
+      const prossimoNumero = numeriEsistenti.length
+        ? Math.max(...numeriEsistenti) + 1
+        : 1;
+
+      fNumero.value = prossimoNumero;
+      fNome.value = `Round ${prossimoNumero}`;
+      fFormato.value = "Medal";
+
+      renderPlayerList();
+      playersLoaded = true;
+    } catch (err) {
+      playerListEl.innerHTML = `<p class="error-msg">Errore nel caricamento dei giocatori: ${err.message}</p>`;
+    }
+  }
+
+  function renderPlayerList() {
+    playerListEl.innerHTML = "";
+    players.forEach((p) => {
+      const row = document.createElement("div");
+      row.className = "player-row";
+      row.dataset.name = p.nome.toLowerCase();
+
+      const nameEl = document.createElement("span");
+      nameEl.className = "pname";
+      nameEl.textContent = p.nome;
+      if (typeof p.handicap === "number") {
+        const hcp = document.createElement("span");
+        hcp.className = "phcp";
+        hcp.textContent = `hcp ${p.handicap}`;
+        nameEl.appendChild(hcp);
+      }
+
+      const input = document.createElement("input");
+      input.type = "number";
+      input.min = "18";
+      input.max = "200";
+      input.inputMode = "numeric";
+      input.placeholder = "—";
+      input.dataset.playerId = p.id;
+      input.addEventListener("input", () => {
+        row.classList.toggle("filled", input.value.trim() !== "");
+        updateFilledCount();
+      });
+
+      row.appendChild(nameEl);
+      row.appendChild(input);
+      playerListEl.appendChild(row);
+    });
+  }
+
+  playerSearch.addEventListener("input", () => {
+    const q = playerSearch.value.trim().toLowerCase();
+    playerListEl.querySelectorAll(".player-row").forEach((row) => {
+      row.classList.toggle("hidden-by-search", q !== "" && !row.dataset.name.includes(q));
+    });
+  });
+
+  function updateFilledCount() {
+    const inputs = [...playerListEl.querySelectorAll('input[type="number"]')];
+    filledCountEl.textContent = inputs.filter((i) => i.value.trim() !== "").length;
+  }
+
+  // ---------- Salvataggio gara ----------
+  saveBtn.addEventListener("click", async () => {
+    saveError.textContent = "";
+    saveOk.textContent = "";
+
+    const numero = parseInt(fNumero.value, 10);
+    const data = fData.value;
+    const nome = fNome.value.trim();
+    const formato = fFormato.value.trim();
+    const buca = parseInt(fBuca.value, 10) || 18;
+    const quota = parseFloat(fQuota.value) || 0;
+
+    if (!numero || !data || !nome) {
+      saveError.textContent = "Compila numero, data e nome della gara.";
+      return;
+    }
+
+    const risultati = [];
+    playerListEl.querySelectorAll('input[type="number"]').forEach((input) => {
+      const val = input.value.trim();
+      if (val === "") return;
+      const lordo = parseInt(val, 10);
+      if (!lordo || lordo < 18) return;
+      risultati.push({ giocatore: input.dataset.playerId, lordo });
+    });
+
+    if (risultati.length < 2) {
+      saveError.textContent = "Inserisci il punteggio di almeno 2 giocatori.";
+      return;
+    }
+
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spinner"></span>Salvataggio...';
+
+    try {
+      await addDoc(collection(db, "gare"), {
+        numero, nome, data, formato, buca, quota, risultati,
+      });
+      saveOk.textContent = `✅ Gara "${nome}" salvata con ${risultati.length} giocatori.`;
+      resetFormForNextGara(numero);
+    } catch (err) {
+      saveError.textContent = "Errore nel salvataggio: " + err.message;
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Salva gara";
+    }
+  });
+
+  function resetFormForNextGara(numeroAppenaSalvato) {
+    const prossimo = numeroAppenaSalvato + 1;
+    fNumero.value = prossimo;
+    fNome.value = `Round ${prossimo}`;
+    fData.value = new Date().toISOString().slice(0, 10);
+    playerListEl.querySelectorAll('input[type="number"]').forEach((input) => {
+      input.value = "";
+      input.closest(".player-row").classList.remove("filled");
+    });
+    updateFilledCount();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+</script>
+
+</body>
+</html>
