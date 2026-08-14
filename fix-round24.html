@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Correggi HCP Round 24 — Golf & Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=45">
+<style>
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .login-card { max-width: 380px; width: 100%; }
+  .login-card .card-body { display: flex; flex-direction: column; gap: 14px; }
+  .login-card h1 { font-size: 1.15rem; text-align: center; margin: 0 0 4px; color: var(--navy-deep); }
+  .login-card p.lede { text-align: center; color: var(--ink-soft); font-size: 0.88rem; margin: 0 0 8px; }
+  .login-card input[type="email"],
+  .login-card input[type="password"] {
+    padding: 11px 14px; border: 1px solid var(--blue-line); border-radius: var(--radius);
+    font-family: var(--font-body); font-size: 0.95rem; width: 100%; box-sizing: border-box;
+  }
+  .login-card input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .login-error { color: var(--danger); font-size: 0.85rem; text-align: center; min-height: 1.1em; }
+  .login-card .btn { width: 100%; justify-content: center; }
+
+  #tool-view main.wrap { max-width: 620px; padding-top: 32px; padding-bottom: 60px; }
+
+  table.preview {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  table.preview th, table.preview td {
+    padding: 9px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--blue-line);
+  }
+  table.preview th {
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    border-bottom: 2px solid var(--navy-deep);
+  }
+  table.preview td.num, table.preview th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.preview td.hcp-new { color: var(--rolex-green); font-weight: 700; }
+
+  .ok-msg { color: var(--rolex-green); font-size: 0.92rem; margin-top: 16px; font-weight: 600; }
+  .error-msg { color: var(--danger); font-size: 0.92rem; margin-top: 16px; font-weight: 600; }
+  [hidden] { display: none !important; }
+
+  .spinner {
+    display: inline-block; width: 13px; height: 13px;
+    border: 2px solid rgba(255,255,255,0.5); border-top-color: #fff; border-radius: 50%;
+    animation: spin 0.7s linear infinite; vertical-align: -2px; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body class="turf-bg">
+
+<!-- ===================== LOGIN ===================== -->
+<div id="login-view">
+  <div class="login-wrap">
+    <div class="card login-card">
+      <div class="card-body">
+        <h1>Correggi HCP Round 24</h1>
+        <p class="lede">Strumento una tantum — accesso riservato admin</p>
+        <form id="login-form">
+          <input type="email" id="login-email" placeholder="Email" autocomplete="username" autofocus required>
+          <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" required>
+          <div class="login-error" id="login-error"></div>
+          <button type="submit" class="btn btn-primary" id="login-btn" style="margin-top:6px;">Accedi</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TOOL ===================== -->
+<div id="tool-view" hidden>
+  <nav class="site-nav">
+    <div class="wrap" style="height:auto; padding:14px 24px;">
+      <a class="brand" href="admin.html"><img src="img/logo.svg" class="brand-icon" alt="Golf & Friends"></a>
+      <span style="color:#fff; font-size:0.8rem; opacity:0.85;" id="user-email"></span>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <div class="section-title tight">
+      <h2>Round 24 — congela HCP</h2>
+    </div>
+
+    <section class="card">
+      <div class="card-body">
+        <p class="muted" style="margin-top:0;">
+          Questo strumento aggiunge l'HCP EGA <b>attuale</b> di ogni giocatore
+          ai risultati della Round 24, che era stata inserita prima che
+          esistesse il pannello admin e quindi non ce l'aveva. Dopo
+          l'applicazione, il netto di questa gara resterà fisso anche se in
+          futuro aggiornerai gli handicap dei giocatori.
+        </p>
+        <p id="loading-msg" class="muted">Caricamento dati di Round 24...</p>
+        <div id="preview-wrap" hidden>
+          <table class="preview" id="preview-table">
+            <thead>
+              <tr><th>Giocatore</th><th class="num">Lordo</th><th class="num">HCP da congelare</th><th class="num">Netto</th></tr>
+            </thead>
+            <tbody id="preview-body"></tbody>
+          </table>
+          <button class="btn btn-primary" id="apply-btn" style="margin-top:18px;">Applica correzione</button>
+        </div>
+        <div id="already-done-msg" class="ok-msg" hidden>
+          ✅ Round 24 ha già l'HCP congelato su tutti i risultati — nessuna azione necessaria. Puoi eliminare questo file dal sito.
+        </div>
+        <div class="ok-msg" id="apply-ok"></div>
+        <div class="error-msg" id="apply-error"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+  import {
+    getFirestore, collection, getDocs, doc, getDoc, updateDoc
+  } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyBaJXWvZNRwEDhWPGLrqUDFY2lZ19UyUyo",
+    authDomain: "golf-friends-lignano.firebaseapp.com",
+    projectId: "golf-friends-lignano",
+    storageBucket: "golf-friends-lignano.firebasestorage.app",
+    messagingSenderId: "375170769411",
+    appId: "1:375170769411:web:38e47294d63225ffc16436",
+    measurementId: "G-LQJCX7TZSS",
+  };
+
+  const app = initializeApp(FIREBASE_CONFIG);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const loginView = document.getElementById("login-view");
+  const toolView = document.getElementById("tool-view");
+  const loginForm = document.getElementById("login-form");
+  const loginBtn = document.getElementById("login-btn");
+  const loginError = document.getElementById("login-error");
+  const userEmailEl = document.getElementById("user-email");
+
+  const loadingMsg = document.getElementById("loading-msg");
+  const previewWrap = document.getElementById("preview-wrap");
+  const previewBody = document.getElementById("preview-body");
+  const alreadyDoneMsg = document.getElementById("already-done-msg");
+  const applyBtn = document.getElementById("apply-btn");
+  const applyOk = document.getElementById("apply-ok");
+  const applyError = document.getElementById("apply-error");
+
+  function hcpGioco(hcpEga) {
+    const intero = Math.floor(hcpEga);
+    const decimale = Math.round((hcpEga - intero) * 10) / 10;
+    return decimale <= 0.5 ? intero : intero + 1;
+  }
+
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    loginError.textContent = "";
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Accesso in corso...";
+    const email = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      loginError.textContent = "Email o password non corrette.";
+    } finally {
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Accedi";
+    }
+  });
+
+  let nuoviRisultati = null;
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loginView.hidden = true;
+      toolView.hidden = false;
+      userEmailEl.textContent = user.email;
+      caricaRound24();
+    } else {
+      loginView.hidden = false;
+      toolView.hidden = true;
+    }
+  });
+
+  async function caricaRound24() {
+    try {
+      const [round24Doc, giocatoriSnap] = await Promise.all([
+        getDoc(doc(db, "gare", "round24")),
+        getDocs(collection(db, "giocatori")),
+      ]);
+
+      if (!round24Doc.exists()) {
+        loadingMsg.textContent = "Non trovo il documento gare/round24 su Firestore.";
+        return;
+      }
+
+      const giocatori = {};
+      giocatoriSnap.docs.forEach((d) => { giocatori[d.id] = { id: d.id, ...d.data() }; });
+
+      const gara = round24Doc.data();
+      const risultati = gara.risultati || [];
+
+      const mancaHcp = risultati.some((r) => r.hcpEga === undefined);
+      if (!mancaHcp) {
+        loadingMsg.hidden = true;
+        alreadyDoneMsg.hidden = false;
+        return;
+      }
+
+      nuoviRisultati = risultati.map((r) => {
+        if (r.hcpEga !== undefined) return r;
+        const p = giocatori[r.giocatore];
+        const hcpEga = p && typeof p.handicap === "number" ? p.handicap : undefined;
+        return hcpEga !== undefined ? { ...r, hcpEga } : r;
+      });
+
+      previewBody.innerHTML = nuoviRisultati
+        .map((r) => {
+          const p = giocatori[r.giocatore];
+          const nome = p ? p.nome : r.giocatore;
+          if (r.hcpEga === undefined) {
+            return `<tr><td>${nome}</td><td class="num">${r.lordo}</td><td class="num">—</td><td class="num">—</td></tr>`;
+          }
+          const netto = r.lordo - hcpGioco(r.hcpEga);
+          return `<tr>
+            <td>${nome}</td>
+            <td class="num">${r.lordo}</td>
+            <td class="num hcp-new">${r.hcpEga}</td>
+            <td class="num">${netto}</td>
+          </tr>`;
+        })
+        .join("");
+
+      loadingMsg.hidden = true;
+      previewWrap.hidden = false;
+    } catch (err) {
+      loadingMsg.textContent = "Errore nel caricamento: " + err.message;
+    }
+  }
+
+  applyBtn.addEventListener("click", async () => {
+    if (!nuoviRisultati) return;
+    applyError.textContent = "";
+    applyOk.textContent = "";
+    applyBtn.disabled = true;
+    applyBtn.innerHTML = '<span class="spinner"></span>Applico...';
+    try {
+      await updateDoc(doc(db, "gare", "round24"), { risultati: nuoviRisultati });
+      applyOk.textContent = "✅ Fatto! Round 24 ora ha l'HCP congelato su tutti i risultati. Puoi eliminare questo file dal sito quando vuoi.";
+      applyBtn.hidden = true;
+    } catch (err) {
+      applyError.textContent = "Errore nel salvataggio: " + err.message;
+      applyBtn.disabled = false;
+      applyBtn.textContent = "Applica correzione";
+    }
+  });
+</script>
+
+</body>
+</html>

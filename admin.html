@@ -131,11 +131,25 @@
     margin-left: 6px;
     font-weight: 400;
   }
+  .score-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    flex-shrink: 0;
+  }
   #admin-view .player-row input[type="number"] {
     width: 78px;
     text-align: center;
     padding: 9px 6px;
     flex-shrink: 0;
+  }
+  .pnetto {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--rolex-green);
+    padding-right: 2px;
   }
   .player-row.filled { background: var(--blue-tint); }
 
@@ -411,6 +425,15 @@
     }
   }
 
+  // Stessa regola di arrotondamento usata in js/common.js: serve per
+  // mostrare in anteprima il netto mentre l'admin inserisce i punteggi,
+  // così un handicap dimenticato di aggiornare salta subito all'occhio.
+  function hcpGioco(hcpEga) {
+    const intero = Math.floor(hcpEga);
+    const decimale = Math.round((hcpEga - intero) * 10) / 10;
+    return decimale <= 0.5 ? intero : intero + 1;
+  }
+
   function renderPlayerList() {
     playerListEl.innerHTML = "";
     players.forEach((p) => {
@@ -428,6 +451,9 @@
         nameEl.appendChild(hcp);
       }
 
+      const scoreCell = document.createElement("div");
+      scoreCell.className = "score-cell";
+
       const input = document.createElement("input");
       input.type = "number";
       input.min = "18";
@@ -435,13 +461,34 @@
       input.inputMode = "numeric";
       input.placeholder = "—";
       input.dataset.playerId = p.id;
+
+      const nettoEl = document.createElement("span");
+      nettoEl.className = "pnetto";
+      nettoEl.hidden = true;
+
+      function refreshNetto() {
+        const val = input.value.trim();
+        const lordo = parseInt(val, 10);
+        if (val === "" || isNaN(lordo) || typeof p.handicap !== "number") {
+          nettoEl.hidden = true;
+          return;
+        }
+        const netto = lordo - hcpGioco(p.handicap);
+        nettoEl.textContent = `netto ${netto}`;
+        nettoEl.hidden = false;
+      }
+
       input.addEventListener("input", () => {
         row.classList.toggle("filled", input.value.trim() !== "");
         updateFilledCount();
+        refreshNetto();
       });
 
+      scoreCell.appendChild(input);
+      scoreCell.appendChild(nettoEl);
+
       row.appendChild(nameEl);
-      row.appendChild(input);
+      row.appendChild(scoreCell);
       playerListEl.appendChild(row);
     });
   }
