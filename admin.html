@@ -481,7 +481,17 @@
       if (val === "") return;
       const lordo = parseInt(val, 10);
       if (!lordo || lordo < 18) return;
-      risultati.push({ giocatore: input.dataset.playerId, lordo });
+      // "Congeliamo" dentro il risultato l'HCP EGA che il giocatore ha
+      // ORA, al momento del salvataggio. Così, se in futuro il suo
+      // handicap viene aggiornato, il netto di QUESTA gara resta fisso
+      // e non cambia con retroattività (stessa logica usata per le
+      // gare storiche importate all'inizio).
+      const player = players.find((p) => p.id === input.dataset.playerId);
+      const risultato = { giocatore: input.dataset.playerId, lordo };
+      if (player && typeof player.handicap === "number") {
+        risultato.hcpEga = player.handicap;
+      }
+      risultati.push(risultato);
     });
 
     if (risultati.length < 2) {
