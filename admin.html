@@ -115,6 +115,32 @@
   }
   .back-link:hover { text-decoration: underline; }
 
+  /* ---------- Selezione multipla (Prossime gare) ---------- */
+  .select-tools {
+    display: flex;
+    gap: 18px;
+    margin: 10px 0 4px;
+  }
+  .link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--navy-deep);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-decoration: underline;
+    cursor: pointer;
+    font-family: var(--font-body);
+  }
+  .bulk-bar { margin: 14px 0; }
+  .row-check {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-right: 4px;
+    accent-color: var(--navy-deep);
+  }
+
   /* ---------- Form fields (riuso lo stile del login) ---------- */
   #admin-view label {
     display: block;
@@ -541,6 +567,26 @@
 
       <button type="button" class="btn btn-primary" id="nav-new-prossima" style="width:100%; margin-bottom:18px;">+ Nuovo evento</button>
 
+      <label for="prossime-search" style="margin-top:0;">Cerca</label>
+      <input type="text" id="prossime-search" placeholder="Cerca per nome...">
+
+      <div class="select-tools">
+        <button type="button" class="link-btn" id="prossime-select-all">Seleziona tutti i visibili</button>
+        <button type="button" class="link-btn" id="prossime-select-none">Deseleziona tutti</button>
+      </div>
+
+      <div class="bulk-bar" id="prossime-bulk-bar" hidden>
+        <button type="button" class="btn btn-outline danger-outline" id="prossime-bulk-delete-btn">Elimina selezionati (<span id="prossime-bulk-count">0</span>)</button>
+      </div>
+      <div class="confirm-box" id="prossime-bulk-confirm" hidden>
+        <p class="muted" style="margin:0 0 10px;">Eliminare definitivamente le voci selezionate? L'operazione non si può annullare.</p>
+        <div class="flex" style="gap:10px;">
+          <button type="button" class="btn btn-outline" id="prossime-bulk-cancel">Annulla</button>
+          <button type="button" class="btn btn-primary danger-fill" id="prossime-bulk-yes">Sì, elimina</button>
+        </div>
+      </div>
+      <div class="error-msg" id="prossime-bulk-error"></div>
+
       <div class="player-list" id="prossime-elenco">
         <p class="muted" id="prossime-loading" style="padding:14px 0;">Caricamento calendario...</p>
       </div>
@@ -712,6 +758,16 @@
   // ---- Prossime gare: elenco ----
   const prossimeElencoEl = document.getElementById("prossime-elenco");
   const navNewProssima = document.getElementById("nav-new-prossima");
+  const prossimeSearch = document.getElementById("prossime-search");
+  const prossimeSelectAllBtn = document.getElementById("prossime-select-all");
+  const prossimeSelectNoneBtn = document.getElementById("prossime-select-none");
+  const prossimeBulkBar = document.getElementById("prossime-bulk-bar");
+  const prossimeBulkCount = document.getElementById("prossime-bulk-count");
+  const prossimeBulkDeleteBtn = document.getElementById("prossime-bulk-delete-btn");
+  const prossimeBulkConfirm = document.getElementById("prossime-bulk-confirm");
+  const prossimeBulkCancel = document.getElementById("prossime-bulk-cancel");
+  const prossimeBulkYes = document.getElementById("prossime-bulk-yes");
+  const prossimeBulkError = document.getElementById("prossime-bulk-error");
 
   // ---- Prossime gare: form ----
   const prossimaFormTitle = document.getElementById("prossima-form-title");
@@ -753,6 +809,7 @@
   let prossime = [];
   let prossimeLoaded = false;
   let prossimeListInitialized = false;
+  let prossimeSelected = new Set(); // id delle voci selezionate per l'eliminazione multipla
   let editingProssimaId = null;
   let prossimaDupWarned = false; // evita di salvare due eventi con la stessa data per svista
 
@@ -1382,6 +1439,8 @@
   function renderProssimeList() {
     const ordinate = [...prossime].sort((a, b) => (a.data || "").localeCompare(b.data || ""));
     prossimeElencoEl.innerHTML = "";
+    prossimeSelected.clear();
+    updateProssimeBulkBar();
     if (ordinate.length === 0) {
       prossimeElencoEl.innerHTML = `<p class="muted" style="padding:14px 0;">Nessun evento in calendario.</p>`;
       return;
@@ -1389,26 +1448,98 @@
     ordinate.forEach((pg) => {
       const row = document.createElement("div");
       row.className = "player-row";
-      row.style.cursor = "pointer";
+      row.dataset.name = (pg.nome || "").toLowerCase();
+
+      const check = document.createElement("input");
+      check.type = "checkbox";
+      check.className = "row-check";
+      check.addEventListener("change", () => {
+        if (check.checked) prossimeSelected.add(pg.id);
+        else prossimeSelected.delete(pg.id);
+        updateProssimeBulkBar();
+      });
 
       const nameEl = document.createElement("span");
       nameEl.className = "pname";
+      nameEl.style.cursor = "pointer";
       nameEl.textContent = pg.nome || "(senza nome)";
       const sub = document.createElement("span");
       sub.className = "phcp";
       sub.textContent = formatDataBreve(pg.data);
       nameEl.appendChild(sub);
+      nameEl.addEventListener("click", () => openProssimaForm(pg.id));
 
       const chevron = document.createElement("span");
       chevron.className = "row-chevron";
       chevron.textContent = "›";
+      chevron.style.cursor = "pointer";
+      chevron.addEventListener("click", () => openProssimaForm(pg.id));
 
+      row.appendChild(check);
       row.appendChild(nameEl);
       row.appendChild(chevron);
-      row.addEventListener("click", () => openProssimaForm(pg.id));
       prossimeElencoEl.appendChild(row);
     });
   }
+
+  function updateProssimeBulkBar() {
+    const n = prossimeSelected.size;
+    prossimeBulkBar.hidden = n === 0;
+    prossimeBulkCount.textContent = n;
+  }
+
+  prossimeSearch.addEventListener("input", () => {
+    const q = prossimeSearch.value.trim().toLowerCase();
+    prossimeElencoEl.querySelectorAll(".player-row").forEach((row) => {
+      row.classList.toggle("hidden-by-search", q !== "" && !row.dataset.name.includes(q));
+    });
+  });
+
+  prossimeSelectAllBtn.addEventListener("click", () => {
+    prossimeElencoEl.querySelectorAll(".player-row:not(.hidden-by-search) .row-check").forEach((check) => {
+      if (!check.checked) {
+        check.checked = true;
+        check.dispatchEvent(new Event("change"));
+      }
+    });
+  });
+
+  prossimeSelectNoneBtn.addEventListener("click", () => {
+    prossimeElencoEl.querySelectorAll(".row-check").forEach((check) => {
+      if (check.checked) {
+        check.checked = false;
+        check.dispatchEvent(new Event("change"));
+      }
+    });
+  });
+
+  prossimeBulkDeleteBtn.addEventListener("click", () => {
+    prossimeBulkError.textContent = "";
+    prossimeBulkConfirm.hidden = false;
+  });
+  prossimeBulkCancel.addEventListener("click", () => {
+    prossimeBulkConfirm.hidden = true;
+  });
+  prossimeBulkYes.addEventListener("click", async () => {
+    prossimeBulkError.textContent = "";
+    prossimeBulkYes.disabled = true;
+    prossimeBulkYes.innerHTML = '<span class="spinner"></span>Elimino...';
+    const ids = [...prossimeSelected];
+    try {
+      for (const id of ids) {
+        await deleteDoc(doc(db, "prossimeGare", id));
+        prossime = prossime.filter((x) => x.id !== id);
+      }
+      prossimeBulkConfirm.hidden = true;
+      renderProssimeList();
+    } catch (err) {
+      prossimeBulkError.textContent = "Errore nell'eliminazione: " + err.message + " — le voci già eliminate non compaiono più nell'elenco, riprova per le restanti.";
+      renderProssimeList();
+    } finally {
+      prossimeBulkYes.disabled = false;
+      prossimeBulkYes.textContent = "Sì, elimina";
+    }
+  });
 
   navNewProssima.addEventListener("click", () => openProssimaForm(null));
 
