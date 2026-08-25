@@ -28,7 +28,7 @@
 <title>Golf & Friends — Golf tra amici</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=45">
+<link rel="stylesheet" href="css/style.css?v=46">
 </head>
 <body class="turf-bg">
 
@@ -71,7 +71,7 @@
     <section class="card">
       <div class="card-header">
         <h2>Prossima gara</h2>
-        <span class="meta" id="prossima-data"></span>
+        <span class="gara-highlight" id="prossima-data"></span>
       </div>
       <div class="card-body" id="prossima-gara-body">
         <p class="muted">Caricamento…</p>
@@ -136,8 +136,8 @@
   document.getElementById("prossima-gara-body").innerHTML = next
     ? `
       <h3 class="mt-0">${next.nome}</h3>
-      <p class="muted" style="margin-top:-6px;">${next.formato} · tee time ${next.teeTime}</p>
-      <p>${next.note}</p>
+      <p class="gara-highlight" style="margin:2px 0 8px;">Tee time ${next.teeTime}</p>
+      <p class="muted" style="margin:0 0 10px;">${next.formato}${next.note ? " · " + next.note : ""}</p>
       <span class="pill gold">${formatDateIt(next.data)}</span>
     `
     : `<div class="empty-state">Nessuna gara in calendario. Proponine una nel gruppo!</div>`;

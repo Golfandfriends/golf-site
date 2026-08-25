@@ -567,6 +567,16 @@ table.scorecard tr.pos-3 td.pos { color: var(--clay); font-weight: 700; }
 .mt-0 { margin-top: 0; }
 .flex { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 
+/* Data e tee time della prossima gara: stessa dimensione/colore del titolo
+   "Golf & Friends" nella card, sia in Calendario che in Home */
+.gara-highlight {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--navy-deep);
+  letter-spacing: -0.01em;
+}
+
 .empty-state {
   border: 1px dashed var(--blue-line);
   border-radius: var(--radius);
