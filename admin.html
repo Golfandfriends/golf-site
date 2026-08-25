@@ -76,6 +76,7 @@
     gap: 16px;
     margin-top: 18px;
   }
+  .menu-grid .menu-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
   @media (max-width: 560px) {
     .menu-grid { grid-template-columns: 1fr; }
   }
@@ -147,8 +148,8 @@
     .form-row-3 { grid-template-columns: 1fr 1fr; }
   }
 
-  /* ---------- Elenco giocatori (comune a gara + giocatori) ---------- */
-  #player-search, #giocatori-search { margin-bottom: 4px; }
+  /* ---------- Elenchi (gare, prossime gare, giocatori) ---------- */
+  #player-search, #giocatori-search, #gare-search { margin-bottom: 4px; }
   .player-list { border-top: 1px solid var(--blue-line); }
   .player-row {
     display: flex;
@@ -175,6 +176,11 @@
     color: var(--ink-soft);
     margin-left: 6px;
     font-weight: 400;
+  }
+  .row-chevron {
+    color: var(--ink-soft);
+    font-size: 1.2rem;
+    flex-shrink: 0;
   }
 
   /* Punteggi gara */
@@ -217,13 +223,10 @@
     padding: 9px 6px;
     flex-shrink: 0;
   }
-  .hcp-save-btn {
+  .hcp-save-btn, .hcp-delete-btn {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    border: none;
-    background: var(--navy-deep);
-    color: #fff;
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
@@ -232,14 +235,61 @@
     align-items: center;
     justify-content: center;
   }
+  .hcp-save-btn {
+    border: none;
+    background: var(--navy-deep);
+    color: #fff;
+  }
   .hcp-save-btn:disabled { opacity: 0.6; cursor: default; }
   .hcp-save-btn.saved { background: var(--rolex-green); }
+  .hcp-delete-btn {
+    border: 1px solid var(--blue-line);
+    background: #fff;
+    color: var(--danger);
+  }
+  .hcp-delete-btn:disabled { opacity: 0.6; cursor: default; }
   .hcp-row-error {
     display: block;
     color: var(--danger);
     font-size: 0.78rem;
     padding: 0 2px 10px;
   }
+  .hcp-confirm-wrap {
+    padding: 0 2px 14px;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+  .hcp-confirm-wrap p { margin: 0; }
+  .hcp-confirm-wrap .confirm-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .hcp-confirm-wrap button {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .hcp-confirm-wrap .confirm-yes { color: var(--danger); }
+  .hcp-confirm-wrap .confirm-cancel { color: var(--ink-soft); text-decoration: underline; }
+
+  /* ---------- Aggiungi giocatore ---------- */
+  #add-giocatore-form { margin-top: 14px; }
+
+  /* ---------- Elimina gara / evento ---------- */
+  .danger-outline {
+    color: var(--danger) !important;
+    border-color: var(--danger) !important;
+  }
+  .danger-fill {
+    background: var(--danger) !important;
+    border-color: var(--danger) !important;
+  }
+  .confirm-box .flex { gap: 10px; }
 
   /* ---------- Messaggi ---------- */
   .ok-msg { color: var(--rolex-green); font-size: 0.9rem; margin-top: 14px; font-weight: 600; }
@@ -320,25 +370,48 @@
         <h2>Pannello Admin</h2>
       </div>
       <div class="menu-grid">
-        <button type="button" class="menu-card" id="nav-gara">
+        <button type="button" class="menu-card" id="nav-gare">
           <span class="menu-icon">🏌️</span>
-          <span class="menu-title">Nuova gara</span>
-          <span class="menu-sub">Inserisci i punteggi dell'ultima gara giocata</span>
+          <span class="menu-title">Gare</span>
+          <span class="menu-sub">Inserisci o correggi i risultati di una gara</span>
+        </button>
+        <button type="button" class="menu-card" id="nav-prossime">
+          <span class="menu-icon">📅</span>
+          <span class="menu-title">Prossime gare</span>
+          <span class="menu-sub">Gestisci il calendario degli eventi futuri</span>
         </button>
         <button type="button" class="menu-card" id="nav-giocatori">
           <span class="menu-icon">👥</span>
           <span class="menu-title">Giocatori</span>
-          <span class="menu-sub">Modifica l'handicap di ciascun giocatore</span>
+          <span class="menu-sub">Aggiungi, modifica o rimuovi un giocatore</span>
         </button>
       </div>
     </div>
 
-    <!-- ---------- NUOVA GARA ---------- -->
-    <div id="gara-view" hidden>
-      <button type="button" class="back-link" id="back-from-gara">← Menu</button>
+    <!-- ---------- GARE — ELENCO ---------- -->
+    <div id="gare-list-view" hidden>
+      <button type="button" class="back-link" id="back-from-gare-list">← Menu</button>
 
       <div class="section-title tight">
-        <h2>Nuova gara</h2>
+        <h2>Gare</h2>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="nav-new-gara" style="width:100%; margin-bottom:18px;">+ Nuova gara</button>
+
+      <label for="gare-search" style="margin-top:0;">Cerca</label>
+      <input type="text" id="gare-search" placeholder="Cerca per nome o numero...">
+
+      <div class="player-list" id="gare-elenco">
+        <p class="muted" id="gare-loading" style="padding:14px 0;">Caricamento gare...</p>
+      </div>
+    </div>
+
+    <!-- ---------- GARE — FORM (nuova / modifica) ---------- -->
+    <div id="gara-form-view" hidden>
+      <button type="button" class="back-link" id="back-from-gara-form">← Elenco gare</button>
+
+      <div class="section-title tight">
+        <h2 id="gara-form-title">Nuova gara</h2>
       </div>
       <section class="card">
         <div class="card-body">
@@ -397,6 +470,74 @@
 
       <div class="ok-msg" id="save-ok"></div>
       <div class="error-msg" id="save-error"></div>
+
+      <button type="button" class="btn btn-outline danger-outline" id="delete-gara-btn" hidden style="width:100%; margin-top:22px;">Elimina questa gara</button>
+      <div class="confirm-box" id="delete-gara-confirm" hidden style="margin-top:12px;">
+        <p class="muted" style="margin:0 0 10px;">Eliminare definitivamente questa gara? L'operazione non si può annullare.</p>
+        <div class="flex">
+          <button type="button" class="btn btn-outline" id="delete-gara-cancel">Annulla</button>
+          <button type="button" class="btn btn-primary danger-fill" id="delete-gara-yes">Sì, elimina</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- PROSSIME GARE — ELENCO ---------- -->
+    <div id="prossime-list-view" hidden>
+      <button type="button" class="back-link" id="back-from-prossime-list">← Menu</button>
+
+      <div class="section-title tight">
+        <h2>Prossime gare</h2>
+      </div>
+
+      <button type="button" class="btn btn-primary" id="nav-new-prossima" style="width:100%; margin-bottom:18px;">+ Nuovo evento</button>
+
+      <div class="player-list" id="prossime-elenco">
+        <p class="muted" id="prossime-loading" style="padding:14px 0;">Caricamento calendario...</p>
+      </div>
+    </div>
+
+    <!-- ---------- PROSSIME GARE — FORM (nuovo / modifica) ---------- -->
+    <div id="prossima-form-view" hidden>
+      <button type="button" class="back-link" id="back-from-prossima-form">← Calendario</button>
+
+      <div class="section-title tight">
+        <h2 id="prossima-form-title">Nuovo evento</h2>
+      </div>
+      <section class="card">
+        <div class="card-body">
+          <label for="p-nome" style="margin-top:0;">Nome gara</label>
+          <input type="text" id="p-nome" required>
+
+          <div class="form-row-2">
+            <div>
+              <label for="p-data">Data</label>
+              <input type="date" id="p-data" required>
+            </div>
+            <div>
+              <label for="p-teetime">Tee time</label>
+              <input type="text" id="p-teetime" placeholder="es. 09:12">
+            </div>
+          </div>
+
+          <label for="p-formato">Formato</label>
+          <input type="text" id="p-formato" list="formati-list">
+
+          <label for="p-note">Note</label>
+          <input type="text" id="p-note" placeholder="es. Iscrizioni aperte, quota 25€ a squadra">
+        </div>
+      </section>
+
+      <div class="ok-msg" id="prossima-save-ok"></div>
+      <div class="error-msg" id="prossima-save-error"></div>
+
+      <button type="button" class="btn btn-outline danger-outline" id="delete-prossima-btn" hidden style="width:100%; margin-top:22px;">Elimina questo evento</button>
+      <div class="confirm-box" id="delete-prossima-confirm" hidden style="margin-top:12px;">
+        <p class="muted" style="margin:0 0 10px;">Eliminare questo evento dal calendario?</p>
+        <div class="flex">
+          <button type="button" class="btn btn-outline" id="delete-prossima-cancel">Annulla</button>
+          <button type="button" class="btn btn-primary danger-fill" id="delete-prossima-yes">Sì, elimina</button>
+        </div>
+      </div>
     </div>
 
     <!-- ---------- GIOCATORI / HCP ---------- -->
@@ -406,9 +547,24 @@
       <div class="section-title tight">
         <h2>Giocatori</h2>
       </div>
+
       <section class="card">
         <div class="card-body">
-          <p class="muted" style="margin-top:0; font-size:0.85rem;">Modifica l'HCP EGA di ciascun giocatore. Ogni riga si salva a sé, premendo il segno di spunta accanto al campo.</p>
+          <button type="button" class="back-link" id="toggle-add-giocatore" style="margin-bottom:0;">+ Aggiungi nuovo giocatore</button>
+          <div id="add-giocatore-form" hidden>
+            <label for="new-giocatore-nome" style="margin-top:0;">Nome e cognome</label>
+            <input type="text" id="new-giocatore-nome" placeholder="es. Mario Rossi">
+            <label for="new-giocatore-hcp">HCP EGA (opzionale)</label>
+            <input type="number" id="new-giocatore-hcp" step="0.1" min="-10" max="54" placeholder="es. 18.4">
+            <div class="error-msg" id="add-giocatore-error"></div>
+            <button type="button" class="btn btn-primary" id="add-giocatore-save" style="width:100%; margin-top:12px;">Aggiungi giocatore</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-body">
+          <p class="muted" style="margin-top:0; font-size:0.85rem;">Modifica l'HCP EGA di ciascun giocatore, oppure eliminalo dal gruppo.</p>
 
           <label for="giocatori-search" style="margin-top:0;">Cerca</label>
           <input type="text" id="giocatori-search" placeholder="Cerca giocatore...">
@@ -424,7 +580,7 @@
 
   <div class="submit-bar" id="submit-bar" hidden>
     <div class="wrap">
-      <button class="btn btn-primary" id="save-btn">Salva gara</button>
+      <button class="btn btn-primary" id="submit-btn">Salva gara</button>
     </div>
   </div>
 </div>
@@ -435,7 +591,7 @@
     getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
   import {
-    getFirestore, collection, getDocs, addDoc, doc, updateDoc
+    getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc
   } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
   const FIREBASE_CONFIG = {
@@ -463,10 +619,21 @@
   // Navigazione tra le sezioni del pannello
   const adminMain = document.getElementById("admin-main");
   const homeView = document.getElementById("home-view");
-  const garaView = document.getElementById("gara-view");
+  const gareListView = document.getElementById("gare-list-view");
+  const garaFormView = document.getElementById("gara-form-view");
+  const prossimeListView = document.getElementById("prossime-list-view");
+  const prossimaFormView = document.getElementById("prossima-form-view");
   const giocatoriView = document.getElementById("giocatori-view");
   const submitBar = document.getElementById("submit-bar");
+  const submitBtn = document.getElementById("submit-btn");
 
+  // ---- Gare: elenco ----
+  const gareSearch = document.getElementById("gare-search");
+  const gareElencoEl = document.getElementById("gare-elenco");
+  const navNewGara = document.getElementById("nav-new-gara");
+
+  // ---- Gare: form ----
+  const garaFormTitle = document.getElementById("gara-form-title");
   const fNumero = document.getElementById("f-numero");
   const fData = document.getElementById("f-data");
   const fNome = document.getElementById("f-nome");
@@ -477,17 +644,60 @@
   const playerSearch = document.getElementById("player-search");
   const playerListEl = document.getElementById("player-list");
   const filledCountEl = document.getElementById("filled-count");
-  const saveBtn = document.getElementById("save-btn");
   const saveOk = document.getElementById("save-ok");
   const saveError = document.getElementById("save-error");
 
+  const deleteGaraBtn = document.getElementById("delete-gara-btn");
+  const deleteGaraConfirm = document.getElementById("delete-gara-confirm");
+  const deleteGaraCancel = document.getElementById("delete-gara-cancel");
+  const deleteGaraYes = document.getElementById("delete-gara-yes");
+
+  // ---- Prossime gare: elenco ----
+  const prossimeElencoEl = document.getElementById("prossime-elenco");
+  const navNewProssima = document.getElementById("nav-new-prossima");
+
+  // ---- Prossime gare: form ----
+  const prossimaFormTitle = document.getElementById("prossima-form-title");
+  const pNome = document.getElementById("p-nome");
+  const pData = document.getElementById("p-data");
+  const pTeetime = document.getElementById("p-teetime");
+  const pFormato = document.getElementById("p-formato");
+  const pNote = document.getElementById("p-note");
+  const prossimaSaveOk = document.getElementById("prossima-save-ok");
+  const prossimaSaveError = document.getElementById("prossima-save-error");
+
+  const deleteProssimaBtn = document.getElementById("delete-prossima-btn");
+  const deleteProssimaConfirm = document.getElementById("delete-prossima-confirm");
+  const deleteProssimaCancel = document.getElementById("delete-prossima-cancel");
+  const deleteProssimaYes = document.getElementById("delete-prossima-yes");
+
+  // ---- Giocatori ----
   const giocatoriSearch = document.getElementById("giocatori-search");
   const giocatoriListEl = document.getElementById("giocatori-list");
+  const toggleAddGiocatore = document.getElementById("toggle-add-giocatore");
+  const addGiocatoreForm = document.getElementById("add-giocatore-form");
+  const newGiocatoreNome = document.getElementById("new-giocatore-nome");
+  const newGiocatoreHcp = document.getElementById("new-giocatore-hcp");
+  const addGiocatoreError = document.getElementById("add-giocatore-error");
+  const addGiocatoreSave = document.getElementById("add-giocatore-save");
 
+  // ---------- Stato ----------
   let players = [];
   let playersLoaded = false;
-  let garaViewInitialized = false;
+
+  let gare = [];
+  let gareLoaded = false;
+  let gareListInitialized = false;
+  let editingGaraId = null;
+  let editingGaraFrozen = {}; // playerId -> hcpEga già congelato nella gara che si sta correggendo
+
+  let prossime = [];
+  let prossimeLoaded = false;
+  let prossimeListInitialized = false;
+  let editingProssimaId = null;
+
   let giocatoriViewInitialized = false;
+  let currentFormView = null; // "gara-form" | "prossima-form" | altro
 
   // ---------- Login / logout ----------
   loginForm.addEventListener("submit", async (e) => {
@@ -537,7 +747,15 @@
       loginForm.reset();
       players = [];
       playersLoaded = false;
-      garaViewInitialized = false;
+      gare = [];
+      gareLoaded = false;
+      gareListInitialized = false;
+      editingGaraId = null;
+      editingGaraFrozen = {};
+      prossime = [];
+      prossimeLoaded = false;
+      prossimeListInitialized = false;
+      editingProssimaId = null;
       giocatoriViewInitialized = false;
     }
   });
@@ -545,22 +763,45 @@
   // ---------- Navigazione ----------
   function showView(name) {
     homeView.hidden = name !== "home";
-    garaView.hidden = name !== "gara";
+    gareListView.hidden = name !== "gare-list";
+    garaFormView.hidden = name !== "gara-form";
+    prossimeListView.hidden = name !== "prossime-list";
+    prossimaFormView.hidden = name !== "prossima-form";
     giocatoriView.hidden = name !== "giocatori";
-    submitBar.hidden = name !== "gara";
-    adminMain.classList.toggle("has-submit-bar", name === "gara");
+
+    currentFormView = name;
+    const showSubmitBar = name === "gara-form" || name === "prossima-form";
+    submitBar.hidden = !showSubmitBar;
+    adminMain.classList.toggle("has-submit-bar", showSubmitBar);
     window.scrollTo({ top: 0, behavior: "instant" });
 
-    if (name === "gara" && !garaViewInitialized) initForm();
+    if (name === "gare-list" && !gareListInitialized) initGareList();
+    if (name === "prossime-list" && !prossimeListInitialized) initProssimeList();
     if (name === "giocatori" && !giocatoriViewInitialized) initGiocatoriView();
   }
 
-  document.getElementById("nav-gara").addEventListener("click", () => showView("gara"));
+  document.getElementById("nav-gare").addEventListener("click", () => showView("gare-list"));
+  document.getElementById("nav-prossime").addEventListener("click", () => showView("prossime-list"));
   document.getElementById("nav-giocatori").addEventListener("click", () => showView("giocatori"));
-  document.getElementById("back-from-gara").addEventListener("click", () => showView("home"));
+  document.getElementById("back-from-gare-list").addEventListener("click", () => showView("home"));
+  document.getElementById("back-from-gara-form").addEventListener("click", () => showView("gare-list"));
+  document.getElementById("back-from-prossime-list").addEventListener("click", () => showView("home"));
+  document.getElementById("back-from-prossima-form").addEventListener("click", () => showView("prossime-list"));
   document.getElementById("back-from-giocatori").addEventListener("click", () => showView("home"));
 
-  // ---------- Caricamento giocatori (condiviso tra le due sezioni) ----------
+  submitBtn.addEventListener("click", () => {
+    if (currentFormView === "gara-form") saveGara();
+    else if (currentFormView === "prossima-form") saveProssima();
+  });
+
+  function formatDataBreve(iso) {
+    if (!iso) return "";
+    const d = new Date(iso + "T00:00:00");
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString("it-IT", { day: "numeric", month: "short", year: "numeric" });
+  }
+
+  // ---------- Caricamento giocatori (condiviso tra più sezioni) ----------
   async function ensurePlayersLoaded() {
     if (playersLoaded) return;
     const giocatoriSnap = await getDocs(collection(db, "giocatori"));
@@ -568,6 +809,20 @@
       .map((d) => ({ id: d.id, ...d.data() }))
       .sort((a, b) => a.nome.localeCompare(b.nome, "it"));
     playersLoaded = true;
+  }
+
+  async function ensureGareLoaded() {
+    if (gareLoaded) return;
+    const snap = await getDocs(collection(db, "gare"));
+    gare = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    gareLoaded = true;
+  }
+
+  async function ensureProssimeLoaded() {
+    if (prossimeLoaded) return;
+    const snap = await getDocs(collection(db, "prossimeGare"));
+    prossime = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    prossimeLoaded = true;
   }
 
   // Stessa regola di arrotondamento usata in js/common.js: serve per
@@ -579,33 +834,115 @@
     return decimale <= 0.5 ? intero : intero + 1;
   }
 
-  // ---------- Sezione: Nuova gara ----------
-  async function initForm() {
-    fData.value = new Date().toISOString().slice(0, 10);
+  // ---------- Sezione: Gare — elenco ----------
+  async function initGareList() {
+    try {
+      await ensureGareLoaded();
+      renderGareList();
+      gareListInitialized = true;
+    } catch (err) {
+      gareElencoEl.innerHTML = `<p class="error-msg">Errore nel caricamento delle gare: ${err.message}</p>`;
+    }
+  }
+
+  function renderGareList() {
+    const ordinate = [...gare].sort((a, b) => (b.numero || 0) - (a.numero || 0));
+    gareElencoEl.innerHTML = "";
+    if (ordinate.length === 0) {
+      gareElencoEl.innerHTML = `<p class="muted" style="padding:14px 0;">Nessuna gara salvata.</p>`;
+      return;
+    }
+    ordinate.forEach((g) => {
+      const row = document.createElement("div");
+      row.className = "player-row";
+      row.style.cursor = "pointer";
+      row.dataset.name = `${g.nome || ""} round ${g.numero || ""}`.toLowerCase();
+
+      const nameEl = document.createElement("span");
+      nameEl.className = "pname";
+      nameEl.textContent = `Round ${g.numero} — ${g.nome}`;
+      const sub = document.createElement("span");
+      sub.className = "phcp";
+      sub.textContent = formatDataBreve(g.data);
+      nameEl.appendChild(sub);
+
+      const chevron = document.createElement("span");
+      chevron.className = "row-chevron";
+      chevron.textContent = "›";
+
+      row.appendChild(nameEl);
+      row.appendChild(chevron);
+      row.addEventListener("click", () => openGaraForm(g.id));
+      gareElencoEl.appendChild(row);
+    });
+  }
+
+  gareSearch.addEventListener("input", () => {
+    const q = gareSearch.value.trim().toLowerCase();
+    gareElencoEl.querySelectorAll(".player-row").forEach((row) => {
+      row.classList.toggle("hidden-by-search", q !== "" && !row.dataset.name.includes(q));
+    });
+  });
+
+  navNewGara.addEventListener("click", () => openGaraForm(null));
+
+  // ---------- Sezione: Gare — form (nuova / modifica) ----------
+  async function openGaraForm(garaId) {
+    editingGaraId = garaId;
+    saveError.textContent = "";
+    saveOk.textContent = "";
+    deleteGaraBtn.hidden = !garaId;
+    deleteGaraConfirm.hidden = true;
+    deleteGaraYes.disabled = false;
+    deleteGaraYes.textContent = "Sì, elimina";
+    submitBtn.disabled = false;
+    submitBtn.textContent = garaId ? "Salva modifiche" : "Salva gara";
+
+    playerListEl.innerHTML = `<p class="muted" style="padding:14px 0;">Caricamento giocatori...</p>`;
+    showView("gara-form");
 
     try {
       await ensurePlayersLoaded();
-      const gareSnap = await getDocs(collection(db, "gare"));
+      await ensureGareLoaded();
 
-      const numeriEsistenti = gareSnap.docs
-        .map((d) => d.data().numero)
-        .filter((n) => typeof n === "number");
-      const prossimoNumero = numeriEsistenti.length
-        ? Math.max(...numeriEsistenti) + 1
-        : 1;
+      editingGaraFrozen = {};
 
-      fNumero.value = prossimoNumero;
-      fNome.value = `Round ${prossimoNumero}`;
-      fFormato.value = "Medal";
+      if (garaId) {
+        const gara = gare.find((g) => g.id === garaId);
+        garaFormTitle.textContent = `Modifica gara — ${gara.nome}`;
+        fNumero.value = gara.numero;
+        fData.value = gara.data;
+        fNome.value = gara.nome;
+        fFormato.value = gara.formato || "";
+        fBuca.value = gara.buca || 18;
+        fQuota.value = gara.quota || 0;
 
-      renderPlayerList();
-      garaViewInitialized = true;
+        const existingByPlayer = {};
+        (gara.risultati || []).forEach((r) => {
+          existingByPlayer[r.giocatore] = r;
+          if (r.hcpEga !== undefined) editingGaraFrozen[r.giocatore] = r.hcpEga;
+        });
+        renderPlayerList(existingByPlayer);
+      } else {
+        garaFormTitle.textContent = "Nuova gara";
+        fData.value = new Date().toISOString().slice(0, 10);
+        const prossimoNumero = gare.length
+          ? Math.max(...gare.map((g) => g.numero || 0)) + 1
+          : 1;
+        fNumero.value = prossimoNumero;
+        fNome.value = `Round ${prossimoNumero}`;
+        fFormato.value = "Medal";
+        fBuca.value = 18;
+        fQuota.value = 0;
+        renderPlayerList({});
+      }
     } catch (err) {
       playerListEl.innerHTML = `<p class="error-msg">Errore nel caricamento dei giocatori: ${err.message}</p>`;
     }
   }
 
-  function renderPlayerList() {
+  function renderPlayerList(existingByPlayer) {
+    existingByPlayer = existingByPlayer || {};
     playerListEl.innerHTML = "";
     players.forEach((p) => {
       const row = document.createElement("div");
@@ -633,6 +970,11 @@
       input.placeholder = "—";
       input.dataset.playerId = p.id;
 
+      const existing = existingByPlayer[p.id];
+      if (existing && typeof existing.lordo === "number") {
+        input.value = existing.lordo;
+      }
+
       const nettoEl = document.createElement("span");
       nettoEl.className = "pnetto";
       nettoEl.hidden = true;
@@ -640,11 +982,17 @@
       function refreshNetto() {
         const val = input.value.trim();
         const lordo = parseInt(val, 10);
-        if (val === "" || isNaN(lordo) || typeof p.handicap !== "number") {
+        // Se questo giocatore ha già un HCP congelato in questa gara (la
+        // stiamo correggendo), l'anteprima usa quello — è quello che verrà
+        // salvato. Altrimenti usa l'HCP attuale del giocatore.
+        const hcpPerAnteprima = editingGaraFrozen[p.id] !== undefined
+          ? editingGaraFrozen[p.id]
+          : p.handicap;
+        if (val === "" || isNaN(lordo) || typeof hcpPerAnteprima !== "number") {
           nettoEl.hidden = true;
           return;
         }
-        const netto = lordo - hcpGioco(p.handicap);
+        const netto = lordo - hcpGioco(hcpPerAnteprima);
         nettoEl.textContent = `netto ${netto}`;
         nettoEl.hidden = false;
       }
@@ -661,7 +1009,13 @@
       row.appendChild(nameEl);
       row.appendChild(scoreCell);
       playerListEl.appendChild(row);
+
+      if (input.value !== "") {
+        row.classList.add("filled");
+        refreshNetto();
+      }
     });
+    updateFilledCount();
   }
 
   playerSearch.addEventListener("input", () => {
@@ -676,7 +1030,7 @@
     filledCountEl.textContent = inputs.filter((i) => i.value.trim() !== "").length;
   }
 
-  saveBtn.addEventListener("click", async () => {
+  async function saveGara() {
     saveError.textContent = "";
     saveOk.textContent = "";
 
@@ -698,14 +1052,17 @@
       if (val === "") return;
       const lordo = parseInt(val, 10);
       if (!lordo || lordo < 18) return;
-      // "Congeliamo" dentro il risultato l'HCP EGA che il giocatore ha
-      // ORA, al momento del salvataggio. Così, se in futuro il suo
-      // handicap viene aggiornato, il netto di QUESTA gara resta fisso
-      // e non cambia con retroattività (stessa logica usata per le
-      // gare storiche importate all'inizio).
-      const player = players.find((p) => p.id === input.dataset.playerId);
-      const risultato = { giocatore: input.dataset.playerId, lordo };
-      if (player && typeof player.handicap === "number") {
+      const playerId = input.dataset.playerId;
+      const player = players.find((p) => p.id === playerId);
+      const risultato = { giocatore: playerId, lordo };
+      // Se questo giocatore aveva già un HCP congelato in questa gara
+      // (la stiamo correggendo), lo manteniamo invariato: non lo
+      // ricongeliamo con l'HCP attuale, altrimenti cambieremmo un dato
+      // storico. Altrimenti (gara nuova, oppure giocatore aggiunto ora
+      // per la prima volta a questa gara) congeliamo l'HCP attuale.
+      if (editingGaraFrozen[playerId] !== undefined) {
+        risultato.hcpEga = editingGaraFrozen[playerId];
+      } else if (player && typeof player.handicap === "number") {
         risultato.hcpEga = player.handicap;
       }
       risultati.push(risultato);
@@ -716,25 +1073,62 @@
       return;
     }
 
-    saveBtn.disabled = true;
-    saveBtn.innerHTML = '<span class="spinner"></span>Salvataggio...';
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span>Salvataggio...';
+
+    const eraModifica = !!editingGaraId;
 
     try {
-      await addDoc(collection(db, "gare"), {
-        numero, nome, data, formato, buca, quota, risultati,
-      });
-      saveOk.textContent = `✅ Gara "${nome}" salvata con ${risultati.length} giocatori.`;
-      resetFormForNextGara(numero);
+      const garaData = { numero, nome, data, formato, buca, quota, risultati };
+      if (eraModifica) {
+        await updateDoc(doc(db, "gare", editingGaraId), garaData);
+        const idx = gare.findIndex((g) => g.id === editingGaraId);
+        if (idx !== -1) gare[idx] = { id: editingGaraId, ...garaData };
+      } else {
+        const ref = await addDoc(collection(db, "gare"), garaData);
+        gare.push({ id: ref.id, ...garaData });
+      }
+
+      const rimossa = await rimuoviProssimaCorrispondente(data);
+      const suffisso = rimossa ? " (rimossa anche la voce corrispondente da Prossime gare)" : "";
+
+      if (eraModifica) {
+        editingGaraId = null;
+        showView("gare-list");
+        renderGareList();
+        saveOk.textContent = `✅ Gara "${nome}" aggiornata.${suffisso}`;
+      } else {
+        saveOk.textContent = `✅ Gara "${nome}" salvata con ${risultati.length} giocatori.${suffisso}`;
+        resetFormForNextGara(numero);
+      }
     } catch (err) {
       saveError.textContent = "Errore nel salvataggio: " + err.message;
     } finally {
-      saveBtn.disabled = false;
-      saveBtn.textContent = "Salva gara";
+      submitBtn.disabled = false;
+      submitBtn.textContent = editingGaraId ? "Salva modifiche" : "Salva gara";
     }
-  });
+  }
+
+  // Se una gara appena salvata corrisponde (stessa data) a una voce di
+  // "Prossime gare", la rimuove per evitare che la stessa gara compaia sia
+  // come "disputata" sia come "in programma".
+  async function rimuoviProssimaCorrispondente(data) {
+    try {
+      await ensureProssimeLoaded();
+      const match = prossime.find((pg) => pg.data === data);
+      if (!match) return false;
+      await deleteDoc(doc(db, "prossimeGare", match.id));
+      prossime = prossime.filter((pg) => pg.id !== match.id);
+      if (prossimeListInitialized) renderProssimeList();
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
 
   function resetFormForNextGara(numeroAppenaSalvato) {
     const prossimo = numeroAppenaSalvato + 1;
+    editingGaraFrozen = {};
     fNumero.value = prossimo;
     fNome.value = `Round ${prossimo}`;
     fData.value = new Date().toISOString().slice(0, 10);
@@ -745,6 +1139,170 @@
     updateFilledCount();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+
+  deleteGaraBtn.addEventListener("click", () => {
+    deleteGaraConfirm.hidden = false;
+  });
+  deleteGaraCancel.addEventListener("click", () => {
+    deleteGaraConfirm.hidden = true;
+  });
+  deleteGaraYes.addEventListener("click", async () => {
+    if (!editingGaraId) return;
+    deleteGaraYes.disabled = true;
+    deleteGaraYes.innerHTML = '<span class="spinner"></span>Elimino...';
+    try {
+      await deleteDoc(doc(db, "gare", editingGaraId));
+      gare = gare.filter((g) => g.id !== editingGaraId);
+      editingGaraId = null;
+      showView("gare-list");
+      renderGareList();
+    } catch (err) {
+      saveError.textContent = "Errore nell'eliminazione: " + err.message;
+      deleteGaraYes.disabled = false;
+      deleteGaraYes.textContent = "Sì, elimina";
+    }
+  });
+
+  // ---------- Sezione: Prossime gare — elenco ----------
+  async function initProssimeList() {
+    try {
+      await ensureProssimeLoaded();
+      renderProssimeList();
+      prossimeListInitialized = true;
+    } catch (err) {
+      prossimeElencoEl.innerHTML = `<p class="error-msg">Errore nel caricamento del calendario: ${err.message}</p>`;
+    }
+  }
+
+  function renderProssimeList() {
+    const ordinate = [...prossime].sort((a, b) => (a.data || "").localeCompare(b.data || ""));
+    prossimeElencoEl.innerHTML = "";
+    if (ordinate.length === 0) {
+      prossimeElencoEl.innerHTML = `<p class="muted" style="padding:14px 0;">Nessun evento in calendario.</p>`;
+      return;
+    }
+    ordinate.forEach((pg) => {
+      const row = document.createElement("div");
+      row.className = "player-row";
+      row.style.cursor = "pointer";
+
+      const nameEl = document.createElement("span");
+      nameEl.className = "pname";
+      nameEl.textContent = pg.nome || "(senza nome)";
+      const sub = document.createElement("span");
+      sub.className = "phcp";
+      sub.textContent = formatDataBreve(pg.data);
+      nameEl.appendChild(sub);
+
+      const chevron = document.createElement("span");
+      chevron.className = "row-chevron";
+      chevron.textContent = "›";
+
+      row.appendChild(nameEl);
+      row.appendChild(chevron);
+      row.addEventListener("click", () => openProssimaForm(pg.id));
+      prossimeElencoEl.appendChild(row);
+    });
+  }
+
+  navNewProssima.addEventListener("click", () => openProssimaForm(null));
+
+  // ---------- Sezione: Prossime gare — form (nuovo / modifica) ----------
+  function openProssimaForm(prossimaId) {
+    editingProssimaId = prossimaId;
+    prossimaSaveError.textContent = "";
+    prossimaSaveOk.textContent = "";
+    deleteProssimaBtn.hidden = !prossimaId;
+    deleteProssimaConfirm.hidden = true;
+    deleteProssimaYes.disabled = false;
+    deleteProssimaYes.textContent = "Sì, elimina";
+    submitBtn.disabled = false;
+    submitBtn.textContent = prossimaId ? "Salva modifiche" : "Salva evento";
+
+    if (prossimaId) {
+      const pg = prossime.find((x) => x.id === prossimaId);
+      prossimaFormTitle.textContent = "Modifica evento";
+      pNome.value = pg.nome || "";
+      pData.value = pg.data || "";
+      pTeetime.value = pg.teeTime || "";
+      pFormato.value = pg.formato || "";
+      pNote.value = pg.note || "";
+    } else {
+      prossimaFormTitle.textContent = "Nuovo evento";
+      pNome.value = "";
+      pData.value = "";
+      pTeetime.value = "";
+      pFormato.value = "";
+      pNote.value = "";
+    }
+
+    showView("prossima-form");
+  }
+
+  async function saveProssima() {
+    prossimaSaveError.textContent = "";
+    prossimaSaveOk.textContent = "";
+
+    const nome = pNome.value.trim();
+    const data = pData.value;
+    if (!nome || !data) {
+      prossimaSaveError.textContent = "Compila almeno nome e data.";
+      return;
+    }
+
+    const payload = {
+      nome,
+      data,
+      teeTime: pTeetime.value.trim(),
+      formato: pFormato.value.trim(),
+      note: pNote.value.trim(),
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span>Salvataggio...';
+
+    try {
+      if (editingProssimaId) {
+        await updateDoc(doc(db, "prossimeGare", editingProssimaId), payload);
+        const idx = prossime.findIndex((x) => x.id === editingProssimaId);
+        if (idx !== -1) prossime[idx] = { id: editingProssimaId, ...payload };
+      } else {
+        const ref = await addDoc(collection(db, "prossimeGare"), payload);
+        prossime.push({ id: ref.id, ...payload });
+      }
+      editingProssimaId = null;
+      showView("prossime-list");
+      renderProssimeList();
+    } catch (err) {
+      prossimaSaveError.textContent = "Errore nel salvataggio: " + err.message;
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Salva evento";
+    }
+  }
+
+  deleteProssimaBtn.addEventListener("click", () => {
+    deleteProssimaConfirm.hidden = false;
+  });
+  deleteProssimaCancel.addEventListener("click", () => {
+    deleteProssimaConfirm.hidden = true;
+  });
+  deleteProssimaYes.addEventListener("click", async () => {
+    if (!editingProssimaId) return;
+    deleteProssimaYes.disabled = true;
+    deleteProssimaYes.innerHTML = '<span class="spinner"></span>Elimino...';
+    try {
+      await deleteDoc(doc(db, "prossimeGare", editingProssimaId));
+      prossime = prossime.filter((x) => x.id !== editingProssimaId);
+      editingProssimaId = null;
+      showView("prossime-list");
+      renderProssimeList();
+    } catch (err) {
+      prossimaSaveError.textContent = "Errore nell'eliminazione: " + err.message;
+      deleteProssimaYes.disabled = false;
+      deleteProssimaYes.textContent = "Sì, elimina";
+    }
+  });
 
   // ---------- Sezione: Giocatori / HCP ----------
   async function initGiocatoriView() {
@@ -785,9 +1343,40 @@
       saveHcpBtn.textContent = "✓";
       saveHcpBtn.title = "Salva handicap";
 
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "hcp-delete-btn";
+      deleteBtn.textContent = "🗑";
+      deleteBtn.title = "Elimina giocatore";
+
       const errEl = document.createElement("span");
       errEl.className = "hcp-row-error";
       errEl.hidden = true;
+
+      const confirmWrap = document.createElement("div");
+      confirmWrap.className = "hcp-confirm-wrap";
+      confirmWrap.hidden = true;
+
+      const confirmText = document.createElement("p");
+      confirmText.textContent = `Eliminare ${p.nome}? I risultati delle gare passate a cui ha partecipato resteranno, ma mostreranno un codice al posto del nome.`;
+
+      const confirmActions = document.createElement("div");
+      confirmActions.className = "confirm-actions";
+
+      const confirmYes = document.createElement("button");
+      confirmYes.type = "button";
+      confirmYes.className = "confirm-yes";
+      confirmYes.textContent = "Sì, elimina";
+
+      const confirmCancel = document.createElement("button");
+      confirmCancel.type = "button";
+      confirmCancel.className = "confirm-cancel";
+      confirmCancel.textContent = "Annulla";
+
+      confirmActions.appendChild(confirmYes);
+      confirmActions.appendChild(confirmCancel);
+      confirmWrap.appendChild(confirmText);
+      confirmWrap.appendChild(confirmActions);
 
       input.addEventListener("input", () => {
         saveHcpBtn.classList.remove("saved");
@@ -821,16 +1410,38 @@
         }
       });
 
+      deleteBtn.addEventListener("click", () => {
+        confirmWrap.hidden = false;
+      });
+      confirmCancel.addEventListener("click", () => {
+        confirmWrap.hidden = true;
+      });
+      confirmYes.addEventListener("click", async () => {
+        confirmYes.disabled = true;
+        confirmYes.textContent = "Elimino...";
+        try {
+          await deleteDoc(doc(db, "giocatori", p.id));
+          players = players.filter((x) => x.id !== p.id);
+          wrap.remove();
+        } catch (err) {
+          confirmYes.disabled = false;
+          confirmYes.textContent = "Sì, elimina";
+          confirmText.textContent = "Errore nell'eliminazione: " + err.message;
+        }
+      });
+
       const inputWrap = document.createElement("div");
       inputWrap.className = "hcp-input-wrap";
       inputWrap.appendChild(input);
       inputWrap.appendChild(saveHcpBtn);
+      inputWrap.appendChild(deleteBtn);
 
       row.appendChild(nameEl);
       row.appendChild(inputWrap);
 
       wrap.appendChild(row);
       wrap.appendChild(errEl);
+      wrap.appendChild(confirmWrap);
       giocatoriListEl.appendChild(wrap);
     });
   }
@@ -840,6 +1451,53 @@
     giocatoriListEl.querySelectorAll(".hcp-row-wrap").forEach((wrap) => {
       wrap.classList.toggle("hidden-by-search", q !== "" && !wrap.dataset.name.includes(q));
     });
+  });
+
+  // ---------- Aggiungi nuovo giocatore ----------
+  toggleAddGiocatore.addEventListener("click", () => {
+    addGiocatoreForm.hidden = !addGiocatoreForm.hidden;
+    toggleAddGiocatore.textContent = addGiocatoreForm.hidden ? "+ Aggiungi nuovo giocatore" : "− Annulla";
+    addGiocatoreError.textContent = "";
+    if (!addGiocatoreForm.hidden) newGiocatoreNome.focus();
+  });
+
+  addGiocatoreSave.addEventListener("click", async () => {
+    addGiocatoreError.textContent = "";
+    const nome = newGiocatoreNome.value.trim();
+    const hcpVal = newGiocatoreHcp.value.trim();
+
+    if (!nome) {
+      addGiocatoreError.textContent = "Inserisci nome e cognome.";
+      return;
+    }
+
+    const payload = { nome };
+    if (hcpVal !== "") {
+      const num = parseFloat(hcpVal);
+      if (isNaN(num)) {
+        addGiocatoreError.textContent = "HCP non valido.";
+        return;
+      }
+      payload.handicap = num;
+    }
+
+    addGiocatoreSave.disabled = true;
+    addGiocatoreSave.innerHTML = '<span class="spinner"></span>Aggiungo...';
+    try {
+      const ref = await addDoc(collection(db, "giocatori"), payload);
+      players.push({ id: ref.id, ...payload });
+      players.sort((a, b) => a.nome.localeCompare(b.nome, "it"));
+      renderGiocatoriList();
+      newGiocatoreNome.value = "";
+      newGiocatoreHcp.value = "";
+      addGiocatoreForm.hidden = true;
+      toggleAddGiocatore.textContent = "+ Aggiungi nuovo giocatore";
+    } catch (err) {
+      addGiocatoreError.textContent = "Errore nel salvataggio: " + err.message;
+    } finally {
+      addGiocatoreSave.disabled = false;
+      addGiocatoreSave.textContent = "Aggiungi giocatore";
+    }
   });
 </script>
 
