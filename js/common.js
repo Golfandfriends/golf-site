@@ -60,8 +60,13 @@ async function loadData() {
     .map((d) => ({ id: d.id, ...d.data() }))
     .sort((a, b) => (a.numero || 0) - (b.numero || 0));
 
+  // Solo eventi da oggi in poi: un evento passato lasciato per sbaglio in
+  // "prossimeGare" (es. non rimosso a tempo debito) non deve continuare a
+  // occupare i primi posti in home/calendario al posto di quelli veri.
+  const oggi = new Date().toISOString().slice(0, 10);
   const prossimeGare = prossimeSnap.docs
     .map((d) => d.data())
+    .filter((g) => (g.data || "") >= oggi)
     .sort((a, b) => (a.data || "").localeCompare(b.data || ""));
 
   const galleria = galleriaSnap.docs.map((d) => d.data());
