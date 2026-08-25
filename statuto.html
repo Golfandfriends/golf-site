@@ -58,8 +58,11 @@
 
 <main class="wrap">
   <section class="card">
-    <div class="card-body" id="statuto-container">
-      <div class="empty-state">Testo dello statuto non ancora inserito. Aggiungilo in <code>/data/data.json</code> nel campo <code>statuto</code>.</div>
+    <div class="card-body" style="text-align:center; padding:36px 20px;">
+      <img src="img/logo.svg" alt="Golf & Friends" style="width:72px; height:72px; border-radius:50%; margin-bottom:16px;">
+      <h3 style="margin:0 0 6px;">Statuto e Regolamento — Edizione 2026</h3>
+      <p style="margin:0 0 22px; color:var(--ink-soft);">Il documento completo con finalità dell'associazione, regole di gioco, tabelle premi e quote.</p>
+      <a class="btn btn-primary" href="statuto.pdf" target="_blank" rel="noopener">Apri / scarica lo Statuto (PDF)</a>
     </div>
   </section>
 </main>
@@ -67,28 +70,10 @@
 <footer class="site-footer">
   <div class="wrap">
     <span>Golf & Friends — sito del gruppo, gestito tra amici.</span>
-    <span>Dati modificabili in <code>/data/data.json</code></span>
+    <span>Statuto in <code>/statuto.pdf</code></span>
   </div>
 </footer>
 
 <script src="js/common.js?v=46"></script>
-<script>
-(async function () {
-  const data = await loadData();
-  const container = document.getElementById("statuto-container");
-
-  if (!data.statuto || data.statuto.length === 0) return;
-
-  container.innerHTML = data.statuto
-    .map(
-      (articolo) => `
-    <div style="margin-bottom:22px;">
-      <h3 style="margin-bottom:6px;">${articolo.titolo}</h3>
-      <p style="margin:0; color:var(--ink-soft);">${articolo.testo}</p>
-    </div>`
-    )
-    .join("");
-})();
-</script>
 </body>
 </html>
