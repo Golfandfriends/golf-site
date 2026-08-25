@@ -291,6 +291,28 @@
   }
   .confirm-box .flex { gap: 10px; }
 
+  /* ---------- Pari merito ---------- */
+  .tie-row-tied { background: var(--blue-tint); }
+  .tie-arrows {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .tie-arrow-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--blue-line);
+    background: #fff;
+    color: var(--navy-deep);
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tie-arrow-btn:disabled { opacity: 0.3; cursor: default; }
+
   /* ---------- Messaggi ---------- */
   .ok-msg { color: var(--rolex-green); font-size: 0.9rem; margin-top: 14px; font-weight: 600; }
   .error-msg { color: var(--danger); font-size: 0.9rem; margin-top: 14px; font-weight: 600; }
@@ -452,31 +474,59 @@
         </div>
       </section>
 
-      <div class="section-title tight">
-        <h2>Punteggi lordi <span class="pill gold" id="filled-count">0</span></h2>
-      </div>
-      <section class="card">
-        <div class="card-body">
-          <p class="muted" style="margin-top:0; font-size:0.85rem;">Inserisci il punteggio lordo solo per chi ha giocato questa gara. Lascia vuoto chi non ha giocato.</p>
+      <div id="gara-scores-section">
+        <div class="section-title tight">
+          <h2>Punteggi lordi <span class="pill gold" id="filled-count">0</span></h2>
+        </div>
+        <section class="card">
+          <div class="card-body">
+            <p class="muted" style="margin-top:0; font-size:0.85rem;">Inserisci il punteggio lordo solo per chi ha giocato questa gara. Lascia vuoto chi non ha giocato.</p>
 
-          <label for="player-search" style="margin-top:0;">Cerca</label>
-          <input type="text" id="player-search" placeholder="Cerca giocatore...">
+            <label for="player-search" style="margin-top:0;">Cerca</label>
+            <input type="text" id="player-search" placeholder="Cerca giocatore...">
 
-          <div class="player-list" id="player-list">
-            <p class="muted" id="players-loading" style="padding:14px 0;">Caricamento giocatori...</p>
+            <div class="player-list" id="player-list">
+              <p class="muted" id="players-loading" style="padding:14px 0;">Caricamento giocatori...</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="ok-msg" id="save-ok"></div>
+        <div class="error-msg" id="save-error"></div>
+
+        <button type="button" class="btn btn-outline danger-outline" id="delete-gara-btn" hidden style="width:100%; margin-top:22px;">Elimina questa gara</button>
+        <div class="confirm-box" id="delete-gara-confirm" hidden style="margin-top:12px;">
+          <p class="muted" style="margin:0 0 10px;">Eliminare definitivamente questa gara? L'operazione non si può annullare.</p>
+          <div class="flex">
+            <button type="button" class="btn btn-outline" id="delete-gara-cancel">Annulla</button>
+            <button type="button" class="btn btn-primary danger-fill" id="delete-gara-yes">Sì, elimina</button>
           </div>
         </div>
-      </section>
+      </div>
 
-      <div class="ok-msg" id="save-ok"></div>
-      <div class="error-msg" id="save-error"></div>
+      <!-- Pannello di risoluzione pari merito: compare solo se ci sono
+           giocatori con lo stesso netto, al posto della sezione punteggi. -->
+      <div id="tie-break-panel" hidden>
+        <div class="section-title tight">
+          <h2>Pari merito da risolvere</h2>
+        </div>
+        <section class="card">
+          <div class="card-body">
+            <p class="muted" style="margin-top:0; font-size:0.85rem;">
+              Alcuni giocatori hanno lo stesso punteggio netto: il sito non assegna
+              pari merito, quindi la posizione va decisa a mano (es. con lo
+              spareggio sulle ultime 9 buche). Usa le frecce per ordinare i
+              giocatori evidenziati, poi conferma.
+            </p>
+            <div class="player-list" id="tie-groups-container"></div>
+          </div>
+        </section>
 
-      <button type="button" class="btn btn-outline danger-outline" id="delete-gara-btn" hidden style="width:100%; margin-top:22px;">Elimina questa gara</button>
-      <div class="confirm-box" id="delete-gara-confirm" hidden style="margin-top:12px;">
-        <p class="muted" style="margin:0 0 10px;">Eliminare definitivamente questa gara? L'operazione non si può annullare.</p>
-        <div class="flex">
-          <button type="button" class="btn btn-outline" id="delete-gara-cancel">Annulla</button>
-          <button type="button" class="btn btn-primary danger-fill" id="delete-gara-yes">Sì, elimina</button>
+        <div class="error-msg" id="tie-break-error"></div>
+
+        <div class="flex" style="gap:10px; margin-top:16px;">
+          <button type="button" class="btn btn-outline" id="tie-break-cancel">← Torna alla gara</button>
+          <button type="button" class="btn btn-primary" id="tie-break-confirm">Conferma e salva</button>
         </div>
       </div>
     </div>
@@ -652,6 +702,13 @@
   const deleteGaraCancel = document.getElementById("delete-gara-cancel");
   const deleteGaraYes = document.getElementById("delete-gara-yes");
 
+  const garaScoresSection = document.getElementById("gara-scores-section");
+  const tieBreakPanel = document.getElementById("tie-break-panel");
+  const tieGroupsContainer = document.getElementById("tie-groups-container");
+  const tieBreakError = document.getElementById("tie-break-error");
+  const tieBreakCancel = document.getElementById("tie-break-cancel");
+  const tieBreakConfirm = document.getElementById("tie-break-confirm");
+
   // ---- Prossime gare: elenco ----
   const prossimeElencoEl = document.getElementById("prossime-elenco");
   const navNewProssima = document.getElementById("nav-new-prossima");
@@ -690,6 +747,8 @@
   let gareListInitialized = false;
   let editingGaraId = null;
   let editingGaraFrozen = {}; // playerId -> hcpEga già congelato nella gara che si sta correggendo
+  let tieBreakRows = []; // righe (con l'ordine scelto) mentre si risolve un pari merito
+  let currentTieGroups = []; // [inizio, fine) nell'array tieBreakRows per ogni gruppo a pari merito
 
   let prossime = [];
   let prossimeLoaded = false;
@@ -752,6 +811,8 @@
       gareListInitialized = false;
       editingGaraId = null;
       editingGaraFrozen = {};
+      tieBreakRows = [];
+      currentTieGroups = [];
       prossime = [];
       prossimeLoaded = false;
       prossimeListInitialized = false;
@@ -790,7 +851,7 @@
   document.getElementById("back-from-giocatori").addEventListener("click", () => showView("home"));
 
   submitBtn.addEventListener("click", () => {
-    if (currentFormView === "gara-form") saveGara();
+    if (currentFormView === "gara-form") attemptSaveGara();
     else if (currentFormView === "prossima-form") saveProssima();
   });
 
@@ -897,6 +958,9 @@
     deleteGaraYes.textContent = "Sì, elimina";
     submitBtn.disabled = false;
     submitBtn.textContent = garaId ? "Salva modifiche" : "Salva gara";
+    tieBreakPanel.hidden = true;
+    garaScoresSection.hidden = false;
+    tieBreakError.textContent = "";
 
     playerListEl.innerHTML = `<p class="muted" style="padding:14px 0;">Caricamento giocatori...</p>`;
     showView("gara-form");
@@ -1030,8 +1094,89 @@
     filledCountEl.textContent = inputs.filter((i) => i.value.trim() !== "").length;
   }
 
-  async function saveGara() {
+  // Costruisce, dai punteggi lordi inseriti, l'elenco dei risultati già
+  // ordinato per netto crescente (a parità di netto, in ordine alfabetico
+  // per nome — l'ordine con cui compaiono nell'elenco giocatori). Questo
+  // stesso ordine è quello che verrà salvato in `risultati`: common.js usa
+  // esattamente la posizione nell'array per decidere chi vince a parità
+  // di netto, quindi salvare già in quest'ordine tiene il sito coerente
+  // con quanto scelto qui nel pannello.
+  function buildPreviewRows() {
+    const rows = [];
+    playerListEl.querySelectorAll('input[type="number"]').forEach((input) => {
+      const val = input.value.trim();
+      if (val === "") return;
+      const lordo = parseInt(val, 10);
+      if (!lordo || lordo < 18) return;
+      const playerId = input.dataset.playerId;
+      const player = players.find((p) => p.id === playerId);
+      // Stessa logica di congelamento usata prima: se questo giocatore
+      // aveva già un HCP congelato in questa gara (la stiamo correggendo),
+      // lo manteniamo invariato; altrimenti congeliamo l'HCP attuale.
+      const hcpEga = editingGaraFrozen[playerId] !== undefined
+        ? editingGaraFrozen[playerId]
+        : (player && typeof player.handicap === "number" ? player.handicap : undefined);
+      const netto = hcpEga !== undefined ? lordo - hcpGioco(hcpEga) : undefined;
+      rows.push({ playerId, nome: player ? player.nome : playerId, lordo, hcpEga, netto });
+    });
+    rows.sort((a, b) => {
+      if (a.netto === undefined && b.netto === undefined) return 0;
+      if (a.netto === undefined) return 1;
+      if (b.netto === undefined) return -1;
+      return a.netto - b.netto;
+    });
+    return rows;
+  }
+
+  // Trova i gruppi di righe consecutive con lo stesso netto (righe con
+  // netto non calcolabile, es. giocatore senza HCP, non entrano in nessun
+  // gruppo). Ogni gruppo è [indiceInizio, indiceFine) dentro l'array rows.
+  function findTieGroups(rows) {
+    const groups = [];
+    let i = 0;
+    while (i < rows.length) {
+      if (rows[i].netto === undefined) { i++; continue; }
+      let j = i + 1;
+      while (j < rows.length && rows[j].netto === rows[i].netto) j++;
+      if (j - i > 1) groups.push([i, j]);
+      i = j;
+    }
+    return groups;
+  }
+
+  async function attemptSaveGara() {
     saveError.textContent = "";
+    saveOk.textContent = "";
+
+    const numero = parseInt(fNumero.value, 10);
+    const data = fData.value;
+    const nome = fNome.value.trim();
+    if (!numero || !data || !nome) {
+      saveError.textContent = "Compila numero, data e nome della gara.";
+      return;
+    }
+
+    const rows = buildPreviewRows();
+    if (rows.length < 2) {
+      saveError.textContent = "Inserisci il punteggio di almeno 2 giocatori.";
+      return;
+    }
+
+    const tieGroups = findTieGroups(rows);
+    if (tieGroups.length > 0) {
+      openTieBreakPanel(rows, tieGroups);
+      return;
+    }
+
+    await runCommit(rows, saveError);
+  }
+
+  // Esegue davvero il salvataggio su Firestore, nell'ordine di `rows`.
+  // Ritorna true/false a seconda dell'esito, scrivendo l'eventuale errore
+  // in errorEl (diverso a seconda che si arrivi qui direttamente o dal
+  // pannello pari merito).
+  async function runCommit(rows, errorEl) {
+    errorEl.textContent = "";
     saveOk.textContent = "";
 
     const numero = parseInt(fNumero.value, 10);
@@ -1041,41 +1186,14 @@
     const buca = parseInt(fBuca.value, 10) || 18;
     const quota = parseFloat(fQuota.value) || 0;
 
-    if (!numero || !data || !nome) {
-      saveError.textContent = "Compila numero, data e nome della gara.";
-      return;
-    }
-
-    const risultati = [];
-    playerListEl.querySelectorAll('input[type="number"]').forEach((input) => {
-      const val = input.value.trim();
-      if (val === "") return;
-      const lordo = parseInt(val, 10);
-      if (!lordo || lordo < 18) return;
-      const playerId = input.dataset.playerId;
-      const player = players.find((p) => p.id === playerId);
-      const risultato = { giocatore: playerId, lordo };
-      // Se questo giocatore aveva già un HCP congelato in questa gara
-      // (la stiamo correggendo), lo manteniamo invariato: non lo
-      // ricongeliamo con l'HCP attuale, altrimenti cambieremmo un dato
-      // storico. Altrimenti (gara nuova, oppure giocatore aggiunto ora
-      // per la prima volta a questa gara) congeliamo l'HCP attuale.
-      if (editingGaraFrozen[playerId] !== undefined) {
-        risultato.hcpEga = editingGaraFrozen[playerId];
-      } else if (player && typeof player.handicap === "number") {
-        risultato.hcpEga = player.handicap;
-      }
-      risultati.push(risultato);
+    const risultati = rows.map((r) => {
+      const risultato = { giocatore: r.playerId, lordo: r.lordo };
+      if (r.hcpEga !== undefined) risultato.hcpEga = r.hcpEga;
+      return risultato;
     });
-
-    if (risultati.length < 2) {
-      saveError.textContent = "Inserisci il punteggio di almeno 2 giocatori.";
-      return;
-    }
 
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<span class="spinner"></span>Salvataggio...';
-
     const eraModifica = !!editingGaraId;
 
     try {
@@ -1101,13 +1219,99 @@
         saveOk.textContent = `✅ Gara "${nome}" salvata con ${risultati.length} giocatori.${suffisso}`;
         resetFormForNextGara(numero);
       }
+      return true;
     } catch (err) {
-      saveError.textContent = "Errore nel salvataggio: " + err.message;
+      errorEl.textContent = "Errore nel salvataggio: " + err.message;
+      return false;
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = editingGaraId ? "Salva modifiche" : "Salva gara";
     }
   }
+
+  // ---------- Pannello pari merito ----------
+  function openTieBreakPanel(rows, tieGroups) {
+    tieBreakRows = rows;
+    tieBreakError.textContent = "";
+    garaScoresSection.hidden = true;
+    tieBreakPanel.hidden = false;
+    submitBar.hidden = true;
+    renderTieBreakPanel(tieGroups);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+
+  function closeTieBreakPanel() {
+    tieBreakPanel.hidden = true;
+    garaScoresSection.hidden = false;
+    submitBar.hidden = false;
+  }
+
+  function renderTieBreakPanel(tieGroups) {
+    currentTieGroups = tieGroups;
+    tieGroupsContainer.innerHTML = "";
+    tieBreakRows.forEach((r, idx) => {
+      const group = tieGroups.find(([s, e]) => idx >= s && idx < e);
+
+      const row = document.createElement("div");
+      row.className = "player-row";
+      if (group) row.classList.add("tie-row-tied");
+
+      const nameEl = document.createElement("span");
+      nameEl.className = "pname";
+      nameEl.textContent = `${idx + 1}° — ${r.nome}`;
+      const sub = document.createElement("span");
+      sub.className = "phcp";
+      sub.textContent = r.netto !== undefined ? `netto ${r.netto}` : "";
+      nameEl.appendChild(sub);
+      row.appendChild(nameEl);
+
+      if (group) {
+        const [s, e] = group;
+        const arrows = document.createElement("div");
+        arrows.className = "tie-arrows";
+
+        const upBtn = document.createElement("button");
+        upBtn.type = "button";
+        upBtn.className = "tie-arrow-btn";
+        upBtn.textContent = "▲";
+        upBtn.title = "Sposta su";
+        upBtn.disabled = idx === s;
+        upBtn.addEventListener("click", () => swapTieRows(idx, idx - 1));
+
+        const downBtn = document.createElement("button");
+        downBtn.type = "button";
+        downBtn.className = "tie-arrow-btn";
+        downBtn.textContent = "▼";
+        downBtn.title = "Sposta giù";
+        downBtn.disabled = idx === e - 1;
+        downBtn.addEventListener("click", () => swapTieRows(idx, idx + 1));
+
+        arrows.appendChild(upBtn);
+        arrows.appendChild(downBtn);
+        row.appendChild(arrows);
+      }
+
+      tieGroupsContainer.appendChild(row);
+    });
+  }
+
+  function swapTieRows(i, j) {
+    const tmp = tieBreakRows[i];
+    tieBreakRows[i] = tieBreakRows[j];
+    tieBreakRows[j] = tmp;
+    renderTieBreakPanel(currentTieGroups);
+  }
+
+  tieBreakCancel.addEventListener("click", closeTieBreakPanel);
+
+  tieBreakConfirm.addEventListener("click", async () => {
+    tieBreakConfirm.disabled = true;
+    tieBreakConfirm.innerHTML = '<span class="spinner"></span>Salvataggio...';
+    const ok = await runCommit(tieBreakRows, tieBreakError);
+    tieBreakConfirm.disabled = false;
+    tieBreakConfirm.textContent = "Conferma e salva";
+    if (ok) closeTieBreakPanel();
+  });
 
   // Se una gara appena salvata corrisponde (stessa data) a una voce di
   // "Prossime gare", la rimuove per evitare che la stessa gara compaia sia
