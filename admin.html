@@ -754,6 +754,7 @@
   let prossimeLoaded = false;
   let prossimeListInitialized = false;
   let editingProssimaId = null;
+  let prossimaDupWarned = false; // evita di salvare due eventi con la stessa data per svista
 
   let giocatoriViewInitialized = false;
   let currentFormView = null; // "gara-form" | "prossima-form" | altro
@@ -1414,6 +1415,7 @@
   // ---------- Sezione: Prossime gare — form (nuovo / modifica) ----------
   function openProssimaForm(prossimaId) {
     editingProssimaId = prossimaId;
+    prossimaDupWarned = false;
     prossimaSaveError.textContent = "";
     prossimaSaveOk.textContent = "";
     deleteProssimaBtn.hidden = !prossimaId;
@@ -1451,6 +1453,17 @@
     const data = pData.value;
     if (!nome || !data) {
       prossimaSaveError.textContent = "Compila almeno nome e data.";
+      return;
+    }
+
+    // Guardia contro la svista di lasciare per errore la data di un altro
+    // evento (es. selettore data su smartphone che non "prende" la nuova
+    // scelta): se esiste già un altro evento con la stessa data, blocca
+    // una volta sola e chiede conferma esplicita prima di salvare davvero.
+    const duplicato = prossime.find((pg) => pg.data === data && pg.id !== editingProssimaId);
+    if (duplicato && !prossimaDupWarned) {
+      prossimaSaveError.textContent = `Esiste già un evento in data ${formatDataBreve(data)} ("${duplicato.nome}"). Controlla la data — se è corretta, premi di nuovo "Salva" per confermare.`;
+      prossimaDupWarned = true;
       return;
     }
 
