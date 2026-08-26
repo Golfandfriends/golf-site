@@ -112,12 +112,12 @@ function markActiveNav() {
   });
 }
 
-// Inserisce i link WhatsApp/Telegram del gruppo ovunque ci sia il contenitore #group-links
+// Inserisce il link WhatsApp del gruppo ovunque ci sia il contenitore #group-links
+// (il canale Telegram non è più usato dal gruppo, rimosso su richiesta di Andrea)
 function renderGroupLinks(data) {
   document.querySelectorAll("[data-group-links]").forEach((el) => {
     el.innerHTML = `
       <a class="btn btn-whatsapp" href="${data.club.whatsappLink}" target="_blank" rel="noopener">Gruppo WhatsApp</a>
-      <a class="btn btn-telegram" href="${data.club.telegramLink}" target="_blank" rel="noopener">Canale Telegram</a>
     `;
   });
 }

@@ -69,7 +69,7 @@
     <div class="card-body">
       <table class="scorecard" id="storico-tabella">
         <thead>
-          <tr><th>Data</th><th>Gara</th><th>Formato</th><th class="num">Buche</th><th class="num">Vincitore</th></tr>
+          <tr><th>Data</th><th>Gara</th><th class="col-optional">Formato</th><th class="num col-optional">Buche</th><th class="num">Vincitore</th></tr>
         </thead>
         <tbody></tbody>
       </table>
@@ -94,7 +94,7 @@
   </div>
 </footer>
 
-<script src="js/common.js?v=46"></script>
+<script src="js/common.js?v=47"></script>
 <script>
 (async function () {
   const data = await loadData();
@@ -133,8 +133,8 @@
         <tr>
           <td>${formatDateIt(g.data)}</td>
           <td>${g.nome}</td>
-          <td>${g.formato}</td>
-          <td class="num">${g.buca}</td>
+          <td class="col-optional">${g.formato}</td>
+          <td class="num col-optional">${g.buca}</td>
           <td class="num player-name">${vincitore ? vincitore.nome : "—"}</td>
         </tr>`;
       })
