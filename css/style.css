@@ -200,6 +200,17 @@ button:focus-visible {
   overflow: hidden;
 }
 
+/* Card di una gara raggiunta da un link diretto (es. da WhatsApp, link
+   con #gara-<id>): tiene conto della barra di navigazione fissa in alto
+   e mette in evidenza il bordo per farla notare subito tra le altre. */
+.gara-card-anchor {
+  scroll-margin-top: 110px;
+}
+.gara-card-anchor:target {
+  border-color: var(--rolex-green);
+  box-shadow: 0 0 0 3px rgba(0,87,63,0.25), var(--shadow-card);
+}
+
 .card-header {
   display: flex;
   align-items: baseline;

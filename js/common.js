@@ -267,14 +267,15 @@ function inizialiGiocatore(nome) {
   return prime.join("").toUpperCase();
 }
 
-// Genera un link wa.me con il testo della classifica già scritto e pronto
-// da inviare: apre WhatsApp (app o web) con il messaggio precompilato,
-// l'utente sceglie il gruppo e conferma l'invio con un tap.
+// Genera un link wa.me con il messaggio già scritto e pronto da inviare:
+// apre WhatsApp (app o web) con il messaggio precompilato, l'utente
+// sceglie il gruppo e conferma l'invio con un tap. Il messaggio contiene
+// solo un link diretto ai risultati completi sul sito (niente elenco
+// posizioni nel testo, su richiesta di Andrea), che punta alla card della
+// gara in classifica.html tramite ancora #gara-<id>.
 function testoWhatsapp(gara, righe) {
-  const righeTeso = righe
-    .map((r) => `${r.posizione}. ${r.nome} — netto ${r.netto}`)
-    .join("\n");
-  const testo = `🏌️ Classifica ${gara.nome} (${formatDateIt(gara.data)})\n\n${righeTeso}\n\nGolf & Friends`;
+  const link = `https://golf-friends-lignano.netlify.app/classifica.html#gara-${gara.id}`;
+  const testo = `🏌️ Risultati ${gara.nome} (${formatDateIt(gara.data)})\n${link}`;
   return `https://wa.me/?text=${encodeURIComponent(testo)}`;
 }
 
