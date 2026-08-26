@@ -28,7 +28,7 @@
 <title>Golf & Friends — Golf tra amici</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=46">
+<link rel="stylesheet" href="css/style.css?v=47">
 </head>
 <body class="turf-bg">
 
@@ -69,9 +69,12 @@
 
   <div class="grid grid-2" style="align-items:start;">
     <section class="card">
-      <div class="card-header">
-        <h2>Prossima gara</h2>
-        <span class="gara-highlight" id="prossima-data"></span>
+      <div class="card-header gara-banner">
+        <div>
+          <span class="gara-banner-label">Prossima gara</span>
+          <h2 class="gara-banner-title" id="prossima-nome">—</h2>
+        </div>
+        <span class="gara-banner-date" id="prossima-data"></span>
       </div>
       <div class="card-body" id="prossima-gara-body">
         <p class="muted">Caricamento…</p>
@@ -132,13 +135,12 @@
 
   // Prossima gara
   const next = data.prossimeGare[0];
+  document.getElementById("prossima-nome").textContent = next ? next.nome : "Nessuna gara programmata";
   document.getElementById("prossima-data").textContent = next ? formatDateIt(next.data) : "";
   document.getElementById("prossima-gara-body").innerHTML = next
     ? `
-      <h3 class="mt-0">${next.nome}</h3>
       <p class="gara-highlight" style="margin:2px 0 8px;">Tee time ${next.teeTime}</p>
-      <p class="muted" style="margin:0 0 10px;">${next.formato}${next.note ? " · " + next.note : ""}</p>
-      <span class="pill gold">${formatDateIt(next.data)}</span>
+      <p class="muted" style="margin:0;">${next.formato}${next.note ? " · " + next.note : ""}</p>
     `
     : `<div class="empty-state">Nessuna gara in calendario. Proponine una nel gruppo!</div>`;
 
