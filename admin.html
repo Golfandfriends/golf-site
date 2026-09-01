@@ -280,6 +280,68 @@
     color: var(--danger);
   }
   .hcp-delete-btn:disabled { opacity: 0.6; cursor: default; }
+
+  /* Tee di partenza (giallo/verde) — riga giocatori */
+  .tee-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--blue-line);
+    background: #fff;
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-family: var(--font-body);
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    cursor: pointer;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .tee-toggle-btn .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tee-toggle-btn.giallo .dot { background: #e8c547; }
+  .tee-toggle-btn.verde .dot { background: var(--rolex-green); }
+  .tee-toggle-btn.verde { border-color: var(--rolex-green); color: var(--rolex-green); }
+  .tee-toggle-btn:disabled { opacity: 0.6; cursor: default; }
+
+  /* Tee di partenza — form "aggiungi giocatore" */
+  .tee-select-group {
+    display: flex;
+    gap: 8px;
+    margin: 6px 0 2px;
+  }
+  .tee-select-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid var(--blue-line);
+    background: #fff;
+    border-radius: var(--radius);
+    padding: 9px 10px;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .tee-select-btn .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tee-select-btn.giallo .dot { background: #e8c547; }
+  .tee-select-btn.verde .dot { background: var(--rolex-green); }
+  .tee-select-btn.active { color: #fff; border-color: transparent; }
+  .tee-select-btn.giallo.active { background: #e8c547; color: #4a3c00; }
+  .tee-select-btn.verde.active { background: var(--rolex-green); color: #fff; }
   .hcp-row-error {
     display: block;
     color: var(--danger);
@@ -705,6 +767,11 @@
             <input type="text" id="new-giocatore-nome" placeholder="es. Mario Rossi">
             <label for="new-giocatore-hcp">HCP EGA (opzionale)</label>
             <input type="number" id="new-giocatore-hcp" step="0.1" min="-10" max="54" placeholder="es. 18.4">
+            <label style="margin-top:10px;">Tee di partenza</label>
+            <div class="tee-select-group" id="new-giocatore-tee-group">
+              <button type="button" class="tee-select-btn giallo active" data-tee="giallo"><span class="dot"></span>Giallo</button>
+              <button type="button" class="tee-select-btn verde" data-tee="verde"><span class="dot"></span>Verde (-4 HCP gioco)</button>
+            </div>
             <div class="error-msg" id="add-giocatore-error"></div>
             <button type="button" class="btn btn-primary" id="add-giocatore-save" style="width:100%; margin-top:12px;">Aggiungi giocatore</button>
           </div>
@@ -886,8 +953,10 @@
   const addGiocatoreForm = document.getElementById("add-giocatore-form");
   const newGiocatoreNome = document.getElementById("new-giocatore-nome");
   const newGiocatoreHcp = document.getElementById("new-giocatore-hcp");
+  const newGiocatoreTeeGroup = document.getElementById("new-giocatore-tee-group");
   const addGiocatoreError = document.getElementById("add-giocatore-error");
   const addGiocatoreSave = document.getElementById("add-giocatore-save");
+  let newGiocatoreTee = "giallo";
 
   // ---- Galleria ----
   const galleriaListEl = document.getElementById("galleria-list");
@@ -910,6 +979,7 @@
   let gareListInitialized = false;
   let editingGaraId = null;
   let editingGaraFrozen = {}; // playerId -> hcpEga già congelato nella gara che si sta correggendo
+  let editingGaraFrozenTee = {}; // playerId -> tee già congelato nella gara che si sta correggendo
   let tieBreakRows = []; // righe (con l'ordine scelto) mentre si risolve un pari merito
   let currentTieGroups = []; // [inizio, fine) nell'array tieBreakRows per ogni gruppo a pari merito
 
@@ -981,6 +1051,7 @@
       gareListInitialized = false;
       editingGaraId = null;
       editingGaraFrozen = {};
+      editingGaraFrozenTee = {};
       tieBreakRows = [];
       currentTieGroups = [];
       prossime = [];
@@ -1072,6 +1143,16 @@
     return decimale <= 0.5 ? intero : intero + 1;
   }
 
+  // Stessa regola usata in js/common.js: chi gioca dal tee verde ha una
+  // detrazione fissa di 4 colpi sull'HCP EGA prima di calcolare l'HCP di
+  // gioco. Il tee viene congelato per ogni gara al momento del salvataggio
+  // (vedi editingGaraFrozenTee più sotto), esattamente come già avviene per
+  // l'HCP EGA — cambiare il tee di un giocatore oggi non tocca le gare già
+  // salvate in passato.
+  function hcpEgaEffettivo(hcpEga, tee) {
+    return tee === "verde" ? hcpEga - 4 : hcpEga;
+  }
+
   // ---------- Sezione: Gare — elenco ----------
   async function initGareList() {
     try {
@@ -1147,6 +1228,7 @@
       await ensureGareLoaded();
 
       editingGaraFrozen = {};
+      editingGaraFrozenTee = {};
 
       if (garaId) {
         const gara = gare.find((g) => g.id === garaId);
@@ -1162,6 +1244,7 @@
         (gara.risultati || []).forEach((r) => {
           existingByPlayer[r.giocatore] = r;
           if (r.hcpEga !== undefined) editingGaraFrozen[r.giocatore] = r.hcpEga;
+          if (r.tee !== undefined) editingGaraFrozenTee[r.giocatore] = r.tee;
         });
         renderPlayerList(existingByPlayer);
       } else {
@@ -1229,11 +1312,14 @@
         const hcpPerAnteprima = editingGaraFrozen[p.id] !== undefined
           ? editingGaraFrozen[p.id]
           : p.handicap;
+        const teePerAnteprima = editingGaraFrozen[p.id] !== undefined
+          ? editingGaraFrozenTee[p.id]
+          : p.tee;
         if (val === "" || isNaN(lordo) || typeof hcpPerAnteprima !== "number") {
           nettoEl.hidden = true;
           return;
         }
-        const netto = lordo - hcpGioco(hcpPerAnteprima);
+        const netto = lordo - hcpGioco(hcpEgaEffettivo(hcpPerAnteprima, teePerAnteprima));
         nettoEl.textContent = `netto ${netto}`;
         nettoEl.hidden = false;
       }
@@ -1293,8 +1379,15 @@
       const hcpEga = editingGaraFrozen[playerId] !== undefined
         ? editingGaraFrozen[playerId]
         : (player && typeof player.handicap === "number" ? player.handicap : undefined);
-      const netto = hcpEga !== undefined ? lordo - hcpGioco(hcpEga) : undefined;
-      rows.push({ playerId, nome: player ? player.nome : playerId, lordo, hcpEga, netto });
+      // Stessa logica di congelamento anche per il tee: se questo
+      // giocatore era già in gara (la stiamo correggendo), il tee resta
+      // quello congelato allora; altrimenti prendiamo il tee attuale del
+      // giocatore, che verrà congelato al salvataggio.
+      const tee = editingGaraFrozen[playerId] !== undefined
+        ? editingGaraFrozenTee[playerId]
+        : (player ? player.tee : undefined);
+      const netto = hcpEga !== undefined ? lordo - hcpGioco(hcpEgaEffettivo(hcpEga, tee)) : undefined;
+      rows.push({ playerId, nome: player ? player.nome : playerId, lordo, hcpEga, tee, netto });
     });
     rows.sort((a, b) => {
       if (a.netto === undefined && b.netto === undefined) return 0;
@@ -1366,6 +1459,7 @@
     const risultati = rows.map((r) => {
       const risultato = { giocatore: r.playerId, lordo: r.lordo };
       if (r.hcpEga !== undefined) risultato.hcpEga = r.hcpEga;
+      if (r.tee === "verde") risultato.tee = "verde";
       return risultato;
     });
 
@@ -1510,6 +1604,7 @@
   function resetFormForNextGara(numeroAppenaSalvato) {
     const prossimo = numeroAppenaSalvato + 1;
     editingGaraFrozen = {};
+    editingGaraFrozenTee = {};
     fNumero.value = prossimo;
     fNome.value = `Round ${prossimo}`;
     fData.value = new Date().toISOString().slice(0, 10);
@@ -1804,6 +1899,34 @@
       input.inputMode = "decimal";
       input.value = typeof p.handicap === "number" ? p.handicap : "";
 
+      const teeBtn = document.createElement("button");
+      teeBtn.type = "button";
+
+      function renderTeeBtn() {
+        const isVerde = p.tee === "verde";
+        teeBtn.className = "tee-toggle-btn " + (isVerde ? "verde" : "giallo");
+        teeBtn.title = isVerde
+          ? "Tee verde: -4 colpi sull'HCP di gioco (regola del gruppo). Tocca per tornare al tee giallo."
+          : "Tee giallo (standard). Tocca per impostare il tee verde (-4 colpi sull'HCP di gioco).";
+        teeBtn.innerHTML = `<span class="dot"></span>${isVerde ? "Verde" : "Giallo"}`;
+      }
+      renderTeeBtn();
+
+      teeBtn.addEventListener("click", async () => {
+        const nuovoTee = p.tee === "verde" ? "giallo" : "verde";
+        teeBtn.disabled = true;
+        try {
+          await updateDoc(doc(db, "giocatori", p.id), { tee: nuovoTee });
+          p.tee = nuovoTee;
+        } catch (err) {
+          errEl.textContent = "Errore nel salvataggio del tee: " + err.message;
+          errEl.hidden = false;
+        } finally {
+          teeBtn.disabled = false;
+          renderTeeBtn();
+        }
+      });
+
       const saveHcpBtn = document.createElement("button");
       saveHcpBtn.type = "button";
       saveHcpBtn.className = "hcp-save-btn";
@@ -1904,6 +2027,7 @@
       inputWrap.appendChild(deleteBtn);
 
       row.appendChild(nameEl);
+      row.appendChild(teeBtn);
       row.appendChild(inputWrap);
 
       wrap.appendChild(row);
@@ -1928,6 +2052,15 @@
     if (!addGiocatoreForm.hidden) newGiocatoreNome.focus();
   });
 
+  newGiocatoreTeeGroup.querySelectorAll(".tee-select-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      newGiocatoreTee = btn.dataset.tee;
+      newGiocatoreTeeGroup.querySelectorAll(".tee-select-btn").forEach((b) => {
+        b.classList.toggle("active", b === btn);
+      });
+    });
+  });
+
   addGiocatoreSave.addEventListener("click", async () => {
     addGiocatoreError.textContent = "";
     const nome = newGiocatoreNome.value.trim();
@@ -1947,6 +2080,7 @@
       }
       payload.handicap = num;
     }
+    if (newGiocatoreTee === "verde") payload.tee = "verde";
 
     addGiocatoreSave.disabled = true;
     addGiocatoreSave.innerHTML = '<span class="spinner"></span>Aggiungo...';
@@ -1957,6 +2091,10 @@
       renderGiocatoriList();
       newGiocatoreNome.value = "";
       newGiocatoreHcp.value = "";
+      newGiocatoreTee = "giallo";
+      newGiocatoreTeeGroup.querySelectorAll(".tee-select-btn").forEach((b) => {
+        b.classList.toggle("active", b.dataset.tee === "giallo");
+      });
       addGiocatoreForm.hidden = true;
       toggleAddGiocatore.textContent = "+ Aggiungi nuovo giocatore";
     } catch (err) {

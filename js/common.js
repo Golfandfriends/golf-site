@@ -195,6 +195,18 @@ function hcpGioco(hcpEga) {
   return decimale <= 0.5 ? intero : intero + 1;
 }
 
+// HCP EGA "effettivo" da usare per calcolare l'HCP di gioco: chi gioca dal
+// tee verde ha una detrazione fissa di 4 colpi (regola del gruppo, invece
+// di ricalcolare course rating/slope del tee verde). Il tee di ogni
+// giocatore viene "congelato" in ciascuna gara al momento dell'inserimento
+// dei risultati, esattamente come già avviene per l'HCP EGA — quindi
+// cambiare il tee di un giocatore oggi non tocca in alcun modo le gare già
+// giocate in passato (che semplicemente non hanno nessun tee congelato e
+// vengono trattate come tee giallo, cioè nessuna detrazione).
+function hcpEgaEffettivo(hcpEga, tee) {
+  return tee === "verde" ? hcpEga - 4 : hcpEga;
+}
+
 // Calcola la classifica di una gara a partire dai punteggi lordi:
 // Netto = Lordo - HCP di gioco (calcolato dall'HCP EGA del giocatore).
 // Ordina per netto crescente (vince chi fa meno colpi netti). In caso di
@@ -209,11 +221,16 @@ function calcolaClassificaGara(data, gara) {
     // Se il risultato porta con sé l'HCP EGA usato in quella gara (storico),
     // lo usiamo; altrimenti ricadiamo sull'HCP attuale del giocatore.
     const hcpEga = r.hcpEga !== undefined ? r.hcpEga : player ? player.handicap : 0;
+    // Il tee (giallo/verde) usato in QUESTA gara è quello congelato nel
+    // risultato stesso (r.tee) — MAI quello attuale del giocatore: una
+    // gara vecchia senza tee congelato resta sempre tee giallo (nessuna
+    // detrazione), anche se in seguito il giocatore viene impostato su
+    // tee verde nel pannello admin.
     // Se il risultato porta con sé l'HCP di gioco già calcolato al tempo
     // (dato storico copiato da un'altra fonte), lo usiamo così com'era —
     // senza ricalcolarlo con la formula attuale del sito. Altrimenti lo
     // calcoliamo noi con la regola in vigore oggi (utile per le gare nuove).
-    const hcpG = r.hcpGioco !== undefined ? r.hcpGioco : hcpGioco(hcpEga);
+    const hcpG = r.hcpGioco !== undefined ? r.hcpGioco : hcpGioco(hcpEgaEffettivo(hcpEga, r.tee));
     return {
       giocatore: r.giocatore,
       nome: player ? player.nome : r.giocatore,

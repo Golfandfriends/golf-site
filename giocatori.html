@@ -73,7 +73,7 @@
   </div>
 </footer>
 
-<script src="js/common.js?v=48"></script>
+<script src="js/common.js?v=49"></script>
 <script>
 (async function () {
   const data = await loadData();
@@ -90,38 +90,12 @@
       <div class="hcp">${p.handicap.toFixed(1)}</div>
       <p class="sub" style="margin-top:2px;">HCP EGA</p>
       <div class="flex" style="margin-top:10px; justify-content:space-between; align-items:flex-end;">
-        <span class="pill sky">HCP gioco ${hcpGioco(p.handicap)}</span>
-        <div style="text-align:right;">
-          <p class="sub" style="margin:0 0 4px;">Round giocati: ${roundGiocati}</p>
-          <div class="flex" style="align-items:center; gap:4px; justify-content:flex-end;">
-            <label for="tee-${p.id}" class="sub" style="margin:0;">Tee</label>
-            <select id="tee-${p.id}" class="tee-select" data-tee="${p.tee || "giallo"}">
-              <option value="giallo" ${(p.tee || "giallo") === "giallo" ? "selected" : ""}>Giallo</option>
-              <option value="verde" ${p.tee === "verde" ? "selected" : ""}>Verde</option>
-            </select>
-          </div>
-        </div>
+        <span class="pill sky">HCP gioco ${hcpGioco(hcpEgaEffettivo(p.handicap, p.tee))}</span>
+        <p class="sub" style="margin:0;">Round giocati: ${roundGiocati}</p>
       </div>
     </div>`;
     })
     .join("");
-
-  // Colora la tendina in base al tee selezionato: sfondo giallo/testo nero per Giallo, sfondo verde/testo bianco per Verde
-  function coloraTeeSelect(select) {
-    if (select.value === "verde") {
-      select.style.background = "#1e7a3d";
-      select.style.color = "#ffffff";
-      select.style.borderColor = "#1e7a3d";
-    } else {
-      select.style.background = "#ffd400";
-      select.style.color = "#000000";
-      select.style.borderColor = "#e0bd00";
-    }
-  }
-  document.querySelectorAll(".tee-select").forEach((select) => {
-    coloraTeeSelect(select);
-    select.addEventListener("change", () => coloraTeeSelect(select));
-  });
 })();
 </script>
 </body>
