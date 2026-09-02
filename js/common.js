@@ -112,6 +112,36 @@ function markActiveNav() {
   });
 }
 
+// Menu mobile (hamburger): sotto i 1024px il menu con tutte le voci
+// (Home, Classifica gare, Calendario, ecc.) non entra più su una riga
+// sola e diventava una striscia scorrevole orizzontale senza nessuna
+// indicazione visiva — la maggior parte delle voci restava nascosta
+// fuori schermo e un tocco sulla barra finiva quasi sempre su "Home"
+// invece che sulla voce desiderata. Il bottone #nav-toggle (visibile
+// solo sotto i 1024px, vedi css/style.css) apre/chiude il menu come
+// tendina verticale con tutte le voci ben visibili.
+function initNavToggle() {
+  const toggle = document.getElementById("nav-toggle");
+  const links = document.getElementById("nav-links");
+  if (!toggle || !links) return;
+
+  function setOpen(open) {
+    links.classList.toggle("open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  toggle.addEventListener("click", () => {
+    setOpen(!links.classList.contains("open"));
+  });
+
+  // Chiude il menu se si tocca/clicca fuori (es. sul resto della pagina)
+  document.addEventListener("click", (e) => {
+    if (!links.classList.contains("open")) return;
+    if (links.contains(e.target) || toggle.contains(e.target)) return;
+    setOpen(false);
+  });
+}
+
 // Inserisce il link WhatsApp del gruppo ovunque ci sia il contenitore #group-links
 // (il canale Telegram non è più usato dal gruppo, rimosso su richiesta di Andrea)
 function renderGroupLinks(data) {
@@ -329,4 +359,7 @@ function weatherCodeToIcon(code) {
   return "🌡️";
 }
 
-document.addEventListener("DOMContentLoaded", markActiveNav);
+document.addEventListener("DOMContentLoaded", () => {
+  markActiveNav();
+  initNavToggle();
+});

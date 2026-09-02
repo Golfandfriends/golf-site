@@ -28,7 +28,7 @@
 <title>Golf & Friends — Golf tra amici</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=48">
+<link rel="stylesheet" href="css/style.css?v=49">
 <link rel="icon" href="img/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="img/icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -41,7 +41,10 @@
 <nav class="site-nav">
   <div class="wrap">
     <a class="brand" href="index.html"><img src="img/logo.svg" class="brand-icon" alt="Golf &amp; Friends"></a>
-    <div class="nav-links">
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Apri menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links" id="nav-links">
       <a href="index.html" aria-current="page">Home</a>
       <a href="classifica.html">Classifica gare</a>
       <a href="calendario.html">Calendario</a>
@@ -132,7 +135,7 @@
   </div>
 </footer>
 
-<script src="js/common.js?v=49"></script>
+<script src="js/common.js?v=50"></script>
 <script>
 (async function () {
   const data = await loadData();
