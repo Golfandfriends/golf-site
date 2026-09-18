@@ -501,7 +501,7 @@ table.scorecard tr.pos-3 td.pos { color: var(--clay); font-weight: 700; }
 }
 .mrow-main { flex: 1; min-width: 0; }
 .mrow-nome { font-size: 0.95rem; line-height: 1.25; }
-.mrow-sub { font-size: 0.74rem; color: var(--ink-soft); margin-top: 2px; }
+.mrow-sub { font-size: 0.74rem; font-weight: 500; color: #3d4a5c; margin-top: 2px; }
 .mrow-side { text-align: right; flex-shrink: 0; }
 .mrow-netto { font-size: 1.25rem; font-weight: 700; color: var(--navy-deep); line-height: 1; }
 .mrow-premio { margin-top: 4px; }
