@@ -248,6 +248,22 @@ function hcpEgaEffettivo(hcpEga, tee) {
 function calcolaClassificaGara(data, gara) {
   const righe = gara.risultati.map((r, indiceInserimento) => {
     const player = data.giocatori.find((g) => g.id === r.giocatore);
+    // Giocatore ritirato a metà gara (infortunio o altro motivo): niente
+    // punteggio/netto calcolabile. Conta comunque nell'array (quindi nel
+    // numero di giocatori usato dalla tabella premi), ma non ha una
+    // posizione in classifica — vedi sort e assegnazione posizione sotto.
+    if (r.ritirato) {
+      return {
+        giocatore: r.giocatore,
+        nome: player ? player.nome : r.giocatore,
+        ritirato: true,
+        lordo: undefined,
+        hcpEga: undefined,
+        hcpGioco: undefined,
+        netto: undefined,
+        indiceInserimento,
+      };
+    }
     // Se il risultato porta con sé l'HCP EGA usato in quella gara (storico),
     // lo usiamo; altrimenti ricadiamo sull'HCP attuale del giocatore.
     const hcpEga = r.hcpEga !== undefined ? r.hcpEga : player ? player.handicap : 0;
@@ -273,11 +289,21 @@ function calcolaClassificaGara(data, gara) {
   });
 
   // Sort stabile per netto crescente: a parità di netto resta l'ordine
-  // di inserimento originale, che vale come spareggio manuale.
-  righe.sort((a, b) => a.netto - b.netto || a.indiceInserimento - b.indiceInserimento);
+  // di inserimento originale, che vale come spareggio manuale. I giocatori
+  // ritirati vanno sempre in fondo, indipendentemente da quanti sono.
+  righe.sort((a, b) => {
+    if (a.ritirato && b.ritirato) return a.indiceInserimento - b.indiceInserimento;
+    if (a.ritirato) return 1;
+    if (b.ritirato) return -1;
+    return a.netto - b.netto || a.indiceInserimento - b.indiceInserimento;
+  });
 
-  righe.forEach((r, i) => {
-    r.posizione = i + 1;
+  // La posizione si assegna solo a chi ha un punteggio: i ritirati non
+  // hanno una posizione (niente premio), ma restano nell'array.
+  let pos = 1;
+  righe.forEach((r) => {
+    if (r.ritirato) return;
+    r.posizione = pos++;
   });
 
   return righe;

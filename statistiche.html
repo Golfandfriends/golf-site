@@ -28,7 +28,7 @@
 <title>Statistiche — Golf & Friends</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=55">
+<link rel="stylesheet" href="css/style.css?v=56">
 <link rel="icon" href="img/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="img/icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -129,7 +129,7 @@
   </div>
 </footer>
 
-<script src="js/common.js?v=50"></script>
+<script src="js/common.js?v=51"></script>
 <script>
 (async function () {
   const data = await loadData();
@@ -138,7 +138,9 @@
   const numGare = data.gare.length;
   const numGiocatori = data.giocatori.length;
   const classificheGare = data.gare.map((g) => calcolaClassificaGara(data, g));
-  const tuttiNetti = classificheGare.flatMap((righe) => righe.map((r) => r.netto));
+  // I giocatori ritirati (r.ritirato) non hanno un netto calcolabile: vanno
+  // esclusi dalle medie, altrimenti il risultato diventerebbe NaN.
+  const tuttiNetti = classificheGare.flatMap((righe) => righe.filter((r) => !r.ritirato).map((r) => r.netto));
   const mediaNetto = tuttiNetti.length ? (tuttiNetti.reduce((a, b) => a + b, 0) / tuttiNetti.length).toFixed(1) : "—";
   const scatoletteTotali = calcolaScatoletteTotali(data).reduce((s, r) => s + r.totale, 0);
 
@@ -158,6 +160,7 @@
   });
   classificheGare.forEach((righe) =>
     righe.forEach((r) => {
+      if (r.ritirato) return; // niente netto/lordo per chi si è ritirato
       nettiPerGiocatore[r.giocatore].push(r.netto);
       lordiPerGiocatore[r.giocatore].push(r.lordo);
     })

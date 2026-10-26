@@ -373,6 +373,22 @@ table.scorecard tr.pos-3 td.pos { color: var(--clay); font-weight: 700; }
 .pill.navy { background: var(--navy-deep); color: var(--white); border-color: transparent; font-weight: 700; }
 .pill.sky { background: #3d7ab5; color: var(--white); border-color: transparent; font-weight: 700; }
 
+/* Giocatore ritirato a metà gara: badge "RIT" in classifica. */
+.prit-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--white);
+  background: var(--danger);
+  padding: 3px 11px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+table.scorecard tr.pos-ritirato td.pos { color: var(--danger); font-weight: 700; }
+.mrow.pos-ritirato .mrow-pos { color: var(--danger); font-weight: 700; }
+
 .premio-badge {
   display: inline-flex;
   align-items: center;

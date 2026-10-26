@@ -6,7 +6,7 @@
 <title>Pannello Admin — Golf & Friends</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=55">
+<link rel="stylesheet" href="css/style.css?v=56">
 <link rel="icon" href="img/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="img/icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -240,6 +240,35 @@
     letter-spacing: 0.01em;
   }
   .player-row.filled { background: var(--blue-tint); }
+
+  /* Giocatore ritirato a metà gara: invece del punteggio lordo si segna
+     "RIT" (conta comunque nel numero di giocatori ai fini della tabella
+     premi e nei round giocati, ma non ha una posizione in classifica). */
+  .player-row.ritirato { background: #fdeeec; }
+  .ritirato-toggle-btn {
+    border: none;
+    background: none;
+    color: var(--ink-soft);
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 2px 0;
+    flex-shrink: 0;
+  }
+  .player-row.ritirato .ritirato-toggle-btn { color: var(--danger); }
+  .prit-badge {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #fff;
+    background: var(--danger);
+    padding: 3px 11px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
 
   /* Editor HCP giocatori */
   .hcp-row-wrap.hidden-by-search { display: none; }
@@ -1272,6 +1301,7 @@
       const row = document.createElement("div");
       row.className = "player-row";
       row.dataset.name = p.nome.toLowerCase();
+      row.dataset.playerId = p.id;
 
       const nameEl = document.createElement("span");
       nameEl.className = "pname";
@@ -1303,6 +1333,19 @@
       nettoEl.className = "pnetto";
       nettoEl.hidden = true;
 
+      // Giocatore ritirato a metà gara: niente punteggio, solo "RIT".
+      // Conta comunque nel totale giocatori (tabella premi) e nei round
+      // giocati, ma non ha una posizione in classifica.
+      const ritBadge = document.createElement("span");
+      ritBadge.className = "prit-badge";
+      ritBadge.textContent = "RIT";
+      ritBadge.hidden = true;
+
+      const ritToggleBtn = document.createElement("button");
+      ritToggleBtn.type = "button";
+      ritToggleBtn.className = "ritirato-toggle-btn";
+      ritToggleBtn.textContent = "Ritirato";
+
       function refreshNetto() {
         const val = input.value.trim();
         const lordo = parseInt(val, 10);
@@ -1324,20 +1367,44 @@
         nettoEl.hidden = false;
       }
 
+      function setRitirato(on) {
+        row.classList.toggle("ritirato", on);
+        input.disabled = on;
+        if (on) {
+          input.value = "";
+          row.classList.remove("filled");
+          nettoEl.hidden = true;
+          ritBadge.hidden = false;
+          ritToggleBtn.textContent = "Annulla ritiro";
+        } else {
+          ritBadge.hidden = true;
+          ritToggleBtn.textContent = "Ritirato";
+        }
+        updateFilledCount();
+      }
+
       input.addEventListener("input", () => {
         row.classList.toggle("filled", input.value.trim() !== "");
         updateFilledCount();
         refreshNetto();
       });
 
+      ritToggleBtn.addEventListener("click", () => {
+        setRitirato(!row.classList.contains("ritirato"));
+      });
+
       scoreCell.appendChild(input);
       scoreCell.appendChild(nettoEl);
+      scoreCell.appendChild(ritBadge);
+      scoreCell.appendChild(ritToggleBtn);
 
       row.appendChild(nameEl);
       row.appendChild(scoreCell);
       playerListEl.appendChild(row);
 
-      if (input.value !== "") {
+      if (existing && existing.ritirato) {
+        setRitirato(true);
+      } else if (input.value !== "") {
         row.classList.add("filled");
         refreshNetto();
       }
@@ -1366,13 +1433,20 @@
   // con quanto scelto qui nel pannello.
   function buildPreviewRows() {
     const rows = [];
-    playerListEl.querySelectorAll('input[type="number"]').forEach((input) => {
+    playerListEl.querySelectorAll(".player-row").forEach((row) => {
+      const playerId = row.dataset.playerId;
+      const player = players.find((p) => p.id === playerId);
+      if (row.classList.contains("ritirato")) {
+        // Ritirato: nessun punteggio/netto, finisce sempre in fondo alla
+        // classifica, ma resta nell'array (conta nel numero di giocatori).
+        rows.push({ playerId, nome: player ? player.nome : playerId, ritirato: true, netto: undefined });
+        return;
+      }
+      const input = row.querySelector('input[type="number"]');
       const val = input.value.trim();
       if (val === "") return;
       const lordo = parseInt(val, 10);
       if (!lordo || lordo < 18) return;
-      const playerId = input.dataset.playerId;
-      const player = players.find((p) => p.id === playerId);
       // Stessa logica di congelamento usata prima: se questo giocatore
       // aveva già un HCP congelato in questa gara (la stiamo correggendo),
       // lo manteniamo invariato; altrimenti congeliamo l'HCP attuale.
@@ -1427,7 +1501,8 @@
     }
 
     const rows = buildPreviewRows();
-    if (rows.length < 2) {
+    const scoredRows = rows.filter((r) => !r.ritirato);
+    if (scoredRows.length < 2) {
       saveError.textContent = "Inserisci il punteggio di almeno 2 giocatori.";
       return;
     }
@@ -1457,6 +1532,7 @@
     const quota = parseFloat(fQuota.value) || 0;
 
     const risultati = rows.map((r) => {
+      if (r.ritirato) return { giocatore: r.playerId, ritirato: true };
       const risultato = { giocatore: r.playerId, lordo: r.lordo };
       if (r.hcpEga !== undefined) risultato.hcpEga = r.hcpEga;
       if (r.tee === "verde") risultato.tee = "verde";

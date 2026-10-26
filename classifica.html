@@ -28,7 +28,7 @@
 <title>Classifica gare — Golf & Friends</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=55">
+<link rel="stylesheet" href="css/style.css?v=56">
 <link rel="icon" href="img/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="img/icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -76,7 +76,7 @@
   </div>
 </footer>
 
-<script src="js/common.js?v=50"></script>
+<script src="js/common.js?v=51"></script>
 <script>
 (async function () {
   const data = await loadData();
@@ -120,6 +120,15 @@
             <tbody>
               ${righe
                 .map((r) => {
+                  if (r.ritirato) {
+                    return `
+                <tr class="pos-ritirato">
+                  <td class="num pos">—</td>
+                  <td class="player-name">${r.nome}</td>
+                  <td class="num" colspan="4"><span class="prit-badge">RIT</span></td>
+                  <td class="num">—</td>
+                </tr>`;
+                  }
                   const scatolette = calcolaPremio(data, righe.length, r.posizione);
                   return `
                 <tr class="pos-${r.posizione}">
@@ -139,6 +148,20 @@
           <div class="only-mobile mobile-rows">
             ${righe
               .map((r) => {
+                if (r.ritirato) {
+                  return `
+              <div class="mrow pos-ritirato">
+                <div class="mrow-pos">—</div>
+                <div class="mrow-main">
+                  <div class="mrow-nome player-name">${r.nome}</div>
+                  <div class="mrow-sub">Ritirato durante la gara</div>
+                </div>
+                <div class="mrow-side">
+                  <div class="mrow-netto"><span class="prit-badge">RIT</span></div>
+                  <div class="mrow-premio">—</div>
+                </div>
+              </div>`;
+                }
                 const scatolette = calcolaPremio(data, righe.length, r.posizione);
                 return `
               <div class="mrow pos-${r.posizione}">
