@@ -318,6 +318,17 @@ button:focus-visible {
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
   .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .grid { gap: 14px; }
+  /* Card "In arrivo" del Calendario: a 2 per riga lo spazio è stretto,
+     quindi nome gara e data vanno impilati invece di affiancati, per non
+     farli andare a capo in modo disordinato. */
+  #prossime-container .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px 16px;
+  }
+  #prossime-container .card-header h3 { font-size: 1rem; }
+  #prossime-container .card-body { padding: 14px 16px 16px; }
 }
 
 /* ---------- Scorecard table ---------- */

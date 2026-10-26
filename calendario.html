@@ -28,7 +28,7 @@
 <title>Calendario — Golf & Friends</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=53">
+<link rel="stylesheet" href="css/style.css?v=54">
 <link rel="icon" href="img/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="img/icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -70,7 +70,7 @@
   <div class="section-title">
     <h2>In arrivo</h2>
   </div>
-  <div class="grid grid-2" id="prossime-container"></div>
+  <div class="grid grid-4" id="prossime-container"></div>
 
   <div class="section-title">
     <h2>Gare giocate</h2>
@@ -115,7 +115,7 @@
     prossimeContainer.innerHTML = `<div class="empty-state">Nessuna gara in programma. Proponine una nel gruppo!</div>`;
   } else {
     prossimeContainer.innerHTML = data.prossimeGare
-      .slice(0, 2)
+      .slice(0, 4)
       .map(
         (g) => `
       <div class="card">
