@@ -545,6 +545,21 @@ table.scorecard tr.pos-3 td.pos { color: var(--clay); font-weight: 700; }
 #prossime-container .card-header .gara-highlight {
   color: var(--white);
 }
+/* Card tutte della stessa altezza, qualunque sia la lunghezza del testo:
+   la card diventa una colonna flessibile e il corpo si allunga per
+   riempire lo spazio restante, così il bordo inferiore è sempre allineato
+   tra una card e l'altra nella stessa riga. */
+#prossime-container.grid { align-items: stretch; }
+#prossime-container .card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+#prossime-container .card-body {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+}
 #storico-tabella thead th {
   background: var(--blue-tint);
   color: var(--navy-deep);

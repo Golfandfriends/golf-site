@@ -28,7 +28,7 @@
 <title>Calendario — Golf & Friends</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=54">
+<link rel="stylesheet" href="css/style.css?v=55">
 <link rel="icon" href="img/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="img/icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -116,18 +116,24 @@
   } else {
     prossimeContainer.innerHTML = data.prossimeGare
       .slice(0, 4)
-      .map(
-        (g) => `
+      .map((g) => {
+        // Giorno+mese e anno separati, così l'anno va SEMPRE a capo da solo
+        // (invece di andarci "a volte sì, a volte no" a seconda di quanto è
+        // lunga la frase) e tutte le card restano della stessa altezza.
+        const d = new Date(g.data + "T00:00:00");
+        const giornoMese = d.toLocaleDateString("it-IT", { day: "numeric", month: "long" });
+        const anno = d.getFullYear();
+        return `
       <div class="card">
         <div class="card-header">
           <h3>${g.nome}</h3>
-          <span class="gara-highlight">${formatDateIt(g.data)}</span>
+          <span class="gara-highlight">${giornoMese}<br>${anno}</span>
         </div>
         <div class="card-body">
           <p class="gara-highlight" style="margin:0;">Tee time ${g.teeTime}</p>
         </div>
-      </div>`
-      )
+      </div>`;
+      })
       .join("");
   }
 
