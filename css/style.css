@@ -262,6 +262,9 @@ button:focus-visible {
   border-radius: var(--radius);
   box-shadow: var(--shadow-card);
 }
+@media (min-width: 781px) {
+  .hero-photo { height: 340px; }
+}
 @media (max-width: 780px) {
   .hero-grid { grid-template-columns: 1fr; }
   .hero-photo img { max-height: 280px; }
