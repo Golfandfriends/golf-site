@@ -333,6 +333,49 @@ function calcolaScatoletteTotali(data, includiTutti) {
     .sort((a, b) => b.totale - a.totale);
 }
 
+// Storico dell'HCP EGA di un giocatore gara per gara, in ordine
+// cronologico (usato per il mini-grafico "andamento stagione" nella
+// pagina Giocatori, su richiesta di Andrea — 13 novembre 2026). Esclude
+// le gare dove il giocatore non ha giocato e quelle dove si è ritirato
+// (un ritiro non ha un HCP EGA registrato per quella gara). Ritorna un
+// array di { data, hcpEga }, dalla gara più vecchia alla più recente.
+function storicoHcpGiocatore(data, giocatoreId) {
+  return data.gare
+    .map((gara) => {
+      const r = gara.risultati.find((res) => res.giocatore === giocatoreId);
+      if (!r || r.ritirato || r.hcpEga === undefined) return null;
+      return { data: gara.data, hcpEga: r.hcpEga };
+    })
+    .filter((v) => v !== null)
+    .sort((a, b) => new Date(a.data) - new Date(b.data));
+}
+
+// Disegna un mini-grafico (sparkline) a partire da una lista di valori
+// numerici: una semplice polilinea SVG, senza assi né etichette — serve
+// solo per un colpo d'occhio sull'andamento, non per leggere i numeri
+// esatti (quelli restano nell'HCP EGA mostrato accanto). Il valore più
+// alto viene disegnato in alto e il più basso in basso, come in un
+// grafico normale. Richiede almeno 2 valori per avere senso.
+function sparklineSvg(valori, colore) {
+  if (valori.length < 2) return "";
+  const larghezza = 90;
+  const altezza = 28;
+  const margine = 3;
+  const min = Math.min(...valori);
+  const max = Math.max(...valori);
+  const range = max - min || 1; // evita la divisione per zero se il valore non è mai cambiato
+  const punti = valori
+    .map((v, i) => {
+      const x = margine + (i * (larghezza - 2 * margine)) / (valori.length - 1);
+      const y = margine + (altezza - 2 * margine) * (1 - (v - min) / range);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+  return `<svg width="${larghezza}" height="${altezza}" viewBox="0 0 ${larghezza} ${altezza}" class="sparkline" aria-hidden="true">
+    <polyline points="${punti}" fill="none" stroke="${colore}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>`;
+}
+
 function inizialiGiocatore(nome) {
   if (!nome) return "?";
   const parti = nome.trim().split(/\s+/);

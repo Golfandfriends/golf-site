@@ -28,7 +28,7 @@
 <title>Giocatori — Golf & Friends</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=56">
+<link rel="stylesheet" href="css/style.css?v=58">
 <link rel="icon" href="img/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="img/icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -77,22 +77,48 @@
   </div>
 </footer>
 
-<script src="js/common.js?v=51"></script>
+<script src="js/common.js?v=52"></script>
 <script>
 (async function () {
   const data = await loadData();
   const container = document.getElementById("giocatori-container");
   const giocatori = [...data.giocatori].sort((a, b) => a.handicap - b.handicap);
 
+  // Sotto questa soglia di gare giocate il mini-grafico non direbbe
+  // nulla di significativo — scelta di Andrea, 13 novembre 2026: chi è
+  // sotto resta fuori per ora (si rivaluta il prossimo anno).
+  const SOGLIA_ANDAMENTO = 4;
+
   container.innerHTML = giocatori
     .map((p) => {
       const roundGiocati = data.gare.filter((g) => g.risultati.some((r) => r.giocatore === p.id)).length;
+      const storico = storicoHcpGiocatore(data, p.id);
+
+      let andamentoHtml = "";
+      if (storico.length >= SOGLIA_ANDAMENTO) {
+        const valori = storico.map((s) => s.hcpEga);
+        const variazione = valori[valori.length - 1] - valori[0];
+        // Verde se l'HCP è migliorato (sceso), rosso se è peggiorato
+        // (salito), grigio neutro se è rimasto identico — riusa gli
+        // stessi colori già presenti sul sito (verde di HCP gioco, rosso
+        // del badge RIT), non ne introduce di nuovi.
+        const colore = variazione < 0 ? "#00573f" : variazione > 0 ? "#8f3b2b" : "#5b6b76";
+        const freccia = variazione < 0 ? "▼" : variazione > 0 ? "▲" : "→";
+        const segno = variazione > 0 ? "+" : "";
+        andamentoHtml = `
+        <div class="spark-row">
+          ${sparklineSvg(valori, colore)}
+          <span class="spark-delta" style="color:${colore};">${freccia} ${segno}${variazione.toFixed(1)}</span>
+        </div>`;
+      }
+
       return `
     <div class="player-card">
       <div class="avatar">${initials(p.nome)}</div>
       <h3 class="player-name">${p.nome}</h3>
       <div class="hcp">${p.handicap.toFixed(1)}</div>
       <p class="sub" style="margin-top:2px;">HCP EGA</p>
+      ${andamentoHtml}
       <div class="flex" style="margin-top:10px; justify-content:space-between; align-items:flex-end;">
         <span class="pill sky">HCP gioco ${hcpGioco(hcpEgaEffettivo(p.handicap, p.tee))}</span>
         <p class="sub" style="margin:0;">Round giocati: ${roundGiocati}</p>
