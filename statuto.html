@@ -28,7 +28,7 @@
 <title>Statuto — Golf & Friends</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=59">
+<link rel="stylesheet" href="css/style.css?v=60">
 <link rel="icon" href="img/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="img/icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -74,6 +74,33 @@
       <a class="btn btn-primary" href="statuto.pdf" target="_blank" rel="noopener">Apri / scarica lo Statuto (PDF)</a>
     </div>
   </section>
+
+  <!-- Blocco appunti "Proposte per lo Statuto" — TEMPORANEO, da
+       rimuovere quando la raccolta proposte si chiude (chiedere ad
+       Andrea). Bacheca pubblica e anonima: chiunque scrive, nessuno
+       vede chi ha scritto cosa (nessun nome/id viene mai salvato). -->
+  <section class="card" style="margin-top:20px;">
+    <div class="card-header">
+      <h3>Proposte per lo Statuto</h3>
+    </div>
+    <div class="card-body">
+      <p class="muted" style="margin-top:0;">
+        Spazio temporaneo per raccogliere proposte di modifica allo Statuto
+        (integrazioni, modifiche, abolizioni). Scrivi la tua idea qui sotto:
+        è completamente anonima, non viene salvato chi scrive cosa.
+      </p>
+      <form id="proposta-form">
+        <textarea id="proposta-testo" class="proposta-textarea" placeholder="Scrivi qui la tua proposta..." maxlength="1000" required></textarea>
+        <div class="flex" style="margin-top:10px; justify-content:space-between; align-items:center;">
+          <button type="submit" class="btn btn-primary">Invia proposta anonima</button>
+          <span id="proposta-status" class="proposta-status"></span>
+        </div>
+      </form>
+      <div id="proposte-lista" class="proposta-list">
+        <p class="muted">Caricamento proposte…</p>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer">
@@ -84,5 +111,87 @@
 </footer>
 
 <script src="js/common.js?v=52"></script>
+<script type="module">
+  // Blocco appunti "Proposte per lo Statuto" — logica isolata in questo
+  // script, non in js/common.js, per non toccare le altre pagine.
+  // L'accesso anonimo a Firebase serve SOLO a soddisfare le regole di
+  // sicurezza di Firestore (serve un request.auth valido per scrivere):
+  // nel documento salvato non finisce MAI nessun id/uid/nome — per
+  // chiunque legga le proposte (incluso Andrea) restano anonime.
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyBaJXWvZNRwEDhWPGLrqUDFY2lZ19UyUyo",
+    authDomain: "golf-friends-lignano.firebaseapp.com",
+    projectId: "golf-friends-lignano",
+    storageBucket: "golf-friends-lignano.firebasestorage.app",
+    messagingSenderId: "375170769411",
+    appId: "1:375170769411:web:38e47294d63225ffc16436",
+    measurementId: "G-LQJCX7TZSS",
+  };
+
+  const app = initializeApp(FIREBASE_CONFIG);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const form = document.getElementById("proposta-form");
+  const textarea = document.getElementById("proposta-testo");
+  const statusEl = document.getElementById("proposta-status");
+  const listaEl = document.getElementById("proposte-lista");
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  async function caricaProposte() {
+    try {
+      const q = query(collection(db, "statutoProposte"), orderBy("creatoIl", "desc"));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        listaEl.innerHTML = `<p class="muted">Nessuna proposta ancora: sii il primo a scriverne una!</p>`;
+        return;
+      }
+      listaEl.innerHTML = snap.docs
+        .map((d) => `<div class="proposta-card">${escapeHtml(d.data().testo || "")}</div>`)
+        .join("");
+    } catch (err) {
+      console.error(err);
+      listaEl.innerHTML = `<p class="muted">Non riesco a caricare le proposte al momento.</p>`;
+    }
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const testo = textarea.value.trim();
+    if (!testo) return;
+    const btn = form.querySelector("button[type=submit]");
+    btn.disabled = true;
+    statusEl.textContent = "Invio in corso…";
+    try {
+      await signInAnonymously(auth);
+      await addDoc(collection(db, "statutoProposte"), {
+        testo,
+        creatoIl: new Date().toISOString(),
+      });
+      textarea.value = "";
+      statusEl.textContent = "Proposta inviata, grazie!";
+      await caricaProposte();
+      setTimeout(() => { statusEl.textContent = ""; }, 4000);
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = "Errore nell'invio, riprova.";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  caricaProposte();
+</script>
 </body>
 </html>

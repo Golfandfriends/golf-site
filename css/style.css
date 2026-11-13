@@ -677,6 +677,30 @@ table.scorecard tr.pos-ritirato td.pos { color: var(--danger); font-weight: 700;
 .spark-col .sparkline { display: block; }
 .spark-delta { font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; }
 
+/* Blocco appunti "Proposte per lo Statuto" (temporaneo, pagina Statuto):
+   bacheca pubblica e anonima per raccogliere proposte di modifica allo
+   Statuto — nessun nome/autore viene mai salvato. */
+.proposta-textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 11px 14px;
+  border: 1px solid var(--blue-line);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  resize: vertical;
+}
+.proposta-status { font-size: 0.85rem; color: var(--rolex-green); margin-top: 8px; min-height: 1.2em; }
+.proposta-list { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+.proposta-card {
+  background: var(--blue-tint);
+  border: 1px solid var(--blue-line);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 0.92rem;
+  white-space: pre-wrap;
+}
+
 /* ---------- Gallery ---------- */
 .gallery-tile {
   aspect-ratio: 4/3;
