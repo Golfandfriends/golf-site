@@ -669,8 +669,12 @@ table.scorecard tr.pos-ritirato td.pos { color: var(--danger); font-weight: 700;
 /* Mini-grafico "andamento stagione" (sparkline) nella card giocatore:
    niente assi/etichette, solo un colpo d'occhio + la variazione numerica
    accanto, colorata in base a se l'HCP è migliorato o peggiorato. */
+.player-card-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.player-card-top .player-card-info { min-width: 0; }
 .spark-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
 .spark-row .sparkline { display: block; flex-shrink: 0; }
+.spark-col { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.spark-col .sparkline { display: block; }
 .spark-delta { font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; }
 
 /* ---------- Gallery ---------- */
