@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<script>
+(function(){
+  var ROLE_KEY='gfRole';
+  var role = localStorage.getItem(ROLE_KEY);
+  if (role !== 'player' && role !== 'admin') {
+    location.replace('login.html?next=' + encodeURIComponent(location.pathname + location.search));
+  } else {
+    window.addEventListener('DOMContentLoaded', function(){
+      var btn = document.createElement('a');
+      btn.href = '#';
+      btn.textContent = role === 'admin' ? 'Esci (admin)' : 'Esci';
+      btn.setAttribute('style','position:fixed;bottom:12px;right:12px;background:#001e3c;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-family:Inter,sans-serif;text-decoration:none;z-index:9999;opacity:0.85;');
+      btn.onclick = function(e){
+        e.preventDefault();
+        localStorage.removeItem(ROLE_KEY);
+        location.href='login.html';
+      };
+      document.body.appendChild(btn);
+    });
+  }
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archivio — Golf & Friends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v=61">
+<link rel="icon" href="img/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="img/icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#001e3c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Golf & Friends">
+</head>
+<body class="turf-bg">
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="img/logo.svg" class="brand-icon" alt="Golf &amp; Friends"></a>
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Apri menu" aria-expanded="false">
+      <span class="nav-toggle-bars"><span></span><span></span><span></span></span>
+      <span class="nav-toggle-label">Menu</span>
+    </button>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html">Home</a>
+      <a href="classifica.html">Classifica gare</a>
+      <a href="calendario.html">Calendario</a>
+      <a href="money-list.html">Money List</a>
+      <a href="premi.html">Tab Premi</a>
+      <a href="giocatori.html">Giocatori</a>
+      <a href="statistiche.html">Statistiche</a>
+      <a href="galleria.html">Galleria</a>
+      <a href="statuto.html">Statuto</a>
+      <a href="archivio.html" aria-current="page">Archivio</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding-bottom:12px;">
+  <div class="wrap">
+    <h1 style="font-size:2.2rem;">Stagione 2026</h1>
+    <p class="lede">Money List, statistiche e risultati della stagione 2026, congelati a fine stagione.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="archivio-tabs" id="archivio-tabs">
+    <button type="button" class="btn btn-primary archivio-tab-btn" data-tab="moneylist">Money List</button>
+    <button type="button" class="btn btn-outline archivio-tab-btn" data-tab="statistiche">Statistiche</button>
+    <button type="button" class="btn btn-outline archivio-tab-btn" data-tab="gare">Risultati gara per gara</button>
+  </div>
+
+  <!-- ===== Money List ===== -->
+  <section class="archivio-section active" id="archivio-moneylist">
+    <div class="section-title" style="margin-top:24px;"><h2>Money List finale</h2></div>
+    <section class="card leaderboard-card">
+      <div class="card-header"><h3>Classifica finale</h3></div>
+      <div class="card-body" style="padding:0; overflow-x:auto;">
+        <table class="leaderboard only-desktop" id="archivio-money-list-tabella">
+          <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Hcp</th><th class="num">Scatolette</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="only-mobile mobile-rows" id="archivio-money-list-mobile" style="padding:0 4px;"></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ===== Statistiche ===== -->
+  <section class="archivio-section" id="archivio-statistiche">
+    <div class="section-title" style="margin-top:24px;"><h2>Statistiche</h2></div>
+    <div class="grid grid-4" id="archivio-stat-tiles" style="margin-bottom:8px; gap:12px;"></div>
+    <div class="grid grid-3">
+      <section class="card leaderboard-card">
+        <div class="card-header"><h3>Netto medio</h3></div>
+        <div class="card-body" style="padding:0; overflow-x:auto;">
+          <table class="leaderboard" id="archivio-tabella-netto-medio">
+            <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Netto medio</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="card leaderboard-card">
+        <div class="card-header"><h3>Lordo medio</h3></div>
+        <div class="card-body" style="padding:0; overflow-x:auto;">
+          <table class="leaderboard" id="archivio-tabella-lordo-medio">
+            <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Lordo medio</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="card leaderboard-card">
+        <div class="card-header"><h3>Più vittorie</h3></div>
+        <div class="card-body" style="padding:0; overflow-x:auto;">
+          <table class="leaderboard" id="archivio-tabella-vittorie">
+            <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">1°</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="card leaderboard-card">
+        <div class="card-header"><h3>Più piazzamenti (Top 4)</h3></div>
+        <div class="card-body" style="padding:0; overflow-x:auto;">
+          <table class="leaderboard" id="archivio-tabella-piazzamenti">
+            <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Top 4</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="card leaderboard-card">
+        <div class="card-header"><h3>Più round giocati</h3></div>
+        <div class="card-body" style="padding:0; overflow-x:auto;">
+          <table class="leaderboard" id="archivio-tabella-round">
+            <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Round</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="card leaderboard-card">
+        <div class="card-header"><h3>Andamento handicap 2026</h3></div>
+        <div class="card-body" style="padding:0; overflow-x:auto;">
+          <table class="leaderboard" id="archivio-tabella-andamento-hcp">
+            <thead><tr><th class="num">Pos</th><th>Giocatore</th><th class="num">Variazione HCP EGA</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===== Risultati gara per gara ===== -->
+  <section class="archivio-section" id="archivio-gare">
+    <div class="section-title" style="margin-top:24px;"><h2>Risultati gara per gara</h2></div>
+    <p class="muted" style="margin-top:-8px; margin-bottom:18px;">
+      Le prime 5 posizioni di ogni gara, dalla più recente alla prima. Tocca "Mostra tutti" per vedere l'intera classifica di una gara.
+    </p>
+    <div id="archivio-gare-container"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Golf & Friends — sito del gruppo, gestito tra amici.</span>
+    <span>Archivio stagione 2026</span>
+  </div>
+</footer>
+
+<script src="js/common.js?v=52"></script>
+<script>
+(async function () {
+  // Data di chiusura della stagione 2026: l'ultima gara giocata è stata il
+  // 21 novembre 2026. Finché non esiste un vero concetto di "stagione" nei
+  // dati (vedi PIANIFICATO in HANDOFF), questa pagina resta corretta anche
+  // quando verranno aggiunte le gare della Winter Season: si limita sempre
+  // e solo alle gare con data fino a questa soglia inclusa.
+  const FINE_STAGIONE_2026 = "2026-11-21";
+
+  const dataCompleta = await loadData();
+  const data = { ...dataCompleta, gare: dataCompleta.gare.filter((g) => g.data <= FINE_STAGIONE_2026) };
+
+  // ---------- Tab ----------
+  const tabBtns = document.querySelectorAll(".archivio-tab-btn");
+  tabBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach((b) => {
+        b.classList.toggle("btn-primary", b === btn);
+        b.classList.toggle("btn-outline", b !== btn);
+      });
+      document.querySelectorAll(".archivio-section").forEach((sec) => {
+        sec.classList.toggle("active", sec.id === "archivio-" + btn.dataset.tab);
+      });
+    });
+  });
+
+  // ---------- Money List ----------
+  // Hcp EGA mostrato: quello "congelato" all'ultima gara del 2026 di ciascun
+  // giocatore (non quello live/attuale, che continuerà a muoversi con la
+  // Winter Season) — coerente con un Archivio che resta una fotografia fissa.
+  const hcpCongelatoPerGiocatore = {};
+  data.giocatori.forEach((p) => {
+    const storico = storicoHcpGiocatore(data, p.id);
+    hcpCongelatoPerGiocatore[p.id] = storico.length ? storico[storico.length - 1].hcpEga : null;
+  });
+
+  const ranked = calcolaScatoletteTotali(data, true);
+  const classiPosizione = { 1: "gold", 2: "silver", 3: "bronze" };
+  document.querySelector("#archivio-money-list-tabella tbody").innerHTML = ranked
+    .map((r, i) => {
+      const pos = i + 1;
+      const player = data.giocatori.find((g) => g.id === r.giocatore);
+      const nome = player ? player.nome : r.giocatore;
+      const classePos = classiPosizione[pos] || "plain";
+      const hcp = hcpCongelatoPerGiocatore[r.giocatore];
+      const premioCella =
+        r.totale > 0
+          ? `<span class="premio-badge">
+               <span class="lb-scatolette-num">${r.totale}</span>
+               <img src="img/scatola-provv1.png" alt="Scatola Titleist Pro V1" class="premio-thumb">
+             </span>`
+          : `<span class="muted">0</span>`;
+      return `
+      <tr class="lb-row">
+        <td class="num"><span class="lb-pos ${classePos}">${pos}</span></td>
+        <td><div class="lb-player"><span class="lb-avatar">${inizialiGiocatore(nome)}</span><span class="lb-nome player-name">${nome}</span></div></td>
+        <td class="num">${hcp === null ? "—" : hcp.toFixed(1)}</td>
+        <td class="num">${premioCella}</td>
+      </tr>`;
+    })
+    .join("");
+
+  document.getElementById("archivio-money-list-mobile").innerHTML = ranked
+    .map((r, i) => {
+      const pos = i + 1;
+      const player = data.giocatori.find((g) => g.id === r.giocatore);
+      const nome = player ? player.nome : r.giocatore;
+      const classePos = classiPosizione[pos] || "plain";
+      const hcp = hcpCongelatoPerGiocatore[r.giocatore];
+      const premioCella =
+        r.totale > 0
+          ? `<span class="premio-badge">
+               <span class="lb-scatolette-num">${r.totale}</span>
+               <img src="img/scatola-provv1.png" alt="Scatola Titleist Pro V1" class="premio-thumb">
+             </span>`
+          : `<span class="muted">0</span>`;
+      return `
+      <div class="mrow">
+        <div class="mrow-pos"><span class="lb-pos ${classePos}">${pos}</span></div>
+        <div class="mrow-main">
+          <div class="mrow-nome player-name">${nome}</div>
+          <div class="mrow-sub">Hcp ${hcp === null ? "—" : hcp.toFixed(1)}</div>
+        </div>
+        <div class="mrow-side">${premioCella}</div>
+      </div>`;
+    })
+    .join("");
+
+  // ---------- Statistiche ----------
+  const classificheGare = data.gare.map((g) => calcolaClassificaGara(data, g));
+  const tuttiNetti = classificheGare.flatMap((righe) => righe.filter((r) => !r.ritirato).map((r) => r.netto));
+  const mediaNetto = tuttiNetti.length ? (tuttiNetti.reduce((a, b) => a + b, 0) / tuttiNetti.length).toFixed(1) : "—";
+  const scatoletteTotali = ranked.reduce((s, r) => s + r.totale, 0);
+
+  document.getElementById("archivio-stat-tiles").innerHTML = `
+    <div class="stat-tile"><span class="num">${data.gare.length}</span><span class="label">Gare giocate</span></div>
+    <div class="stat-tile"><span class="num">${data.giocatori.length}</span><span class="label">Giocatori attivi</span></div>
+    <div class="stat-tile"><span class="num">${mediaNetto}</span><span class="label">Netto medio del gruppo</span></div>
+    <div class="stat-tile"><span class="num">${scatoletteTotali}</span><span class="label">Scatolette assegnate</span></div>
+  `;
+
+  const nettiPerGiocatore = {};
+  const lordiPerGiocatore = {};
+  data.giocatori.forEach((p) => {
+    nettiPerGiocatore[p.id] = [];
+    lordiPerGiocatore[p.id] = [];
+  });
+  classificheGare.forEach((righe) =>
+    righe.forEach((r) => {
+      if (r.ritirato) return;
+      nettiPerGiocatore[r.giocatore].push(r.netto);
+      lordiPerGiocatore[r.giocatore].push(r.lordo);
+    })
+  );
+  const mediaPerGiocatore = {};
+  const mediaLordoPerGiocatore = {};
+  data.giocatori.forEach((p) => {
+    const vn = nettiPerGiocatore[p.id];
+    const vl = lordiPerGiocatore[p.id];
+    mediaPerGiocatore[p.id] = vn.length ? vn.reduce((a, b) => a + b, 0) / vn.length : null;
+    mediaLordoPerGiocatore[p.id] = vl.length ? vl.reduce((a, b) => a + b, 0) / vl.length : null;
+  });
+
+  function renderLeaderboardTabella(idTabella, righeOrdinate, campoValore, suffisso = "") {
+    const tbody = document.querySelector(`#${idTabella} tbody`);
+    if (righeOrdinate.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="muted">Nessun dato ancora.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = righeOrdinate
+      .map((r, i) => {
+        const pos = i + 1;
+        const valore = r[campoValore] === null ? "—" : `${r[campoValore]}${suffisso}`;
+        return `
+        <tr class="lb-row">
+          <td class="num"><span class="lb-pos plain">${pos}</span></td>
+          <td class="player-name">${playerName(data, r.giocatore)}</td>
+          <td class="num">${valore}</td>
+        </tr>`;
+      })
+      .join("");
+  }
+
+  const classificaNettoMedio = data.giocatori
+    .map((p) => ({ giocatore: p.id, valore: mediaPerGiocatore[p.id] === null ? null : mediaPerGiocatore[p.id].toFixed(1) }))
+    .sort((a, b) => (a.valore === null ? 1 : b.valore === null ? -1 : a.valore - b.valore));
+  const classificaLordoMedio = data.giocatori
+    .map((p) => ({ giocatore: p.id, valore: mediaLordoPerGiocatore[p.id] === null ? null : mediaLordoPerGiocatore[p.id].toFixed(1) }))
+    .sort((a, b) => (a.valore === null ? 1 : b.valore === null ? -1 : a.valore - b.valore));
+
+  const vittoriePerGiocatore = {};
+  const piazzamentiPerGiocatore = {};
+  const roundPerGiocatore = {};
+  data.giocatori.forEach((p) => {
+    vittoriePerGiocatore[p.id] = 0;
+    piazzamentiPerGiocatore[p.id] = 0;
+    roundPerGiocatore[p.id] = 0;
+  });
+  classificheGare.forEach((righe) => {
+    righe.forEach((r) => {
+      roundPerGiocatore[r.giocatore]++;
+      if (r.posizione === 1) vittoriePerGiocatore[r.giocatore]++;
+      if (r.posizione >= 1 && r.posizione <= 4) piazzamentiPerGiocatore[r.giocatore]++;
+    });
+  });
+
+  renderLeaderboardTabella("archivio-tabella-netto-medio", classificaNettoMedio, "valore");
+  renderLeaderboardTabella("archivio-tabella-lordo-medio", classificaLordoMedio, "valore");
+  renderLeaderboardTabella(
+    "archivio-tabella-vittorie",
+    data.giocatori.map((p) => ({ giocatore: p.id, valore: vittoriePerGiocatore[p.id] })).sort((a, b) => b.valore - a.valore),
+    "valore"
+  );
+  renderLeaderboardTabella(
+    "archivio-tabella-piazzamenti",
+    data.giocatori.map((p) => ({ giocatore: p.id, valore: piazzamentiPerGiocatore[p.id] })).sort((a, b) => b.valore - a.valore),
+    "valore"
+  );
+  renderLeaderboardTabella(
+    "archivio-tabella-round",
+    data.giocatori.map((p) => ({ giocatore: p.id, valore: roundPerGiocatore[p.id] })).sort((a, b) => b.valore - a.valore),
+    "valore"
+  );
+
+  // ---- NUOVO: Andamento handicap 2026 (HCP EGA, min. 4 round, congelato) ----
+  const andamentoHandicap = data.giocatori
+    .map((p) => {
+      const storico = storicoHcpGiocatore(data, p.id);
+      if (storico.length < 4) return null;
+      const primo = storico[0].hcpEga;
+      const ultimo = storico[storico.length - 1].hcpEga;
+      return { giocatore: p.id, delta: Math.round((ultimo - primo) * 10) / 10 };
+    })
+    .filter((r) => r !== null)
+    .sort((a, b) => a.delta - b.delta);
+
+  const tbodyAndamento = document.querySelector("#archivio-tabella-andamento-hcp tbody");
+  if (andamentoHandicap.length === 0) {
+    tbodyAndamento.innerHTML = `<tr><td colspan="3" class="muted">Nessun dato ancora.</td></tr>`;
+  } else {
+    tbodyAndamento.innerHTML = andamentoHandicap
+      .map((r, i) => {
+        const pos = i + 1;
+        let colore, segno;
+        if (r.delta < 0) {
+          colore = "color: var(--rolex-green); font-weight:700;";
+          segno = `▼ ${r.delta.toFixed(1)}`;
+        } else if (r.delta > 0) {
+          colore = "color:#b23b3b; font-weight:700;";
+          segno = `▲ +${r.delta.toFixed(1)}`;
+        } else {
+          colore = "color: var(--ink-soft);";
+          segno = "→ 0.0";
+        }
+        return `
+        <tr class="lb-row">
+          <td class="num"><span class="lb-pos plain">${pos}</span></td>
+          <td class="player-name">${playerName(data, r.giocatore)}</td>
+          <td class="num" style="${colore}">${segno}</td>
+        </tr>`;
+      })
+      .join("");
+  }
+
+  // ---------- Risultati gara per gara (prime 5 + "Mostra tutti") ----------
+  const gareOrdinate = [...data.gare].sort((a, b) => new Date(b.data) - new Date(a.data));
+  const container = document.getElementById("archivio-gare-container");
+
+  if (gareOrdinate.length === 0) {
+    container.innerHTML = `<div class="empty-state">Nessuna gara archiviata.</div>`;
+  } else {
+    container.innerHTML = gareOrdinate
+      .map((gara, idx) => {
+        const righe = calcolaClassificaGara(data, gara);
+        const top5 = righe.slice(0, 5);
+        const resto = righe.slice(5);
+
+        function rigaCompatta(r) {
+          if (r.ritirato) {
+            return `
+            <div class="mrow pos-ritirato">
+              <div class="mrow-pos">—</div>
+              <div class="mrow-main"><div class="mrow-nome player-name">${r.nome}</div></div>
+              <div class="mrow-side"><span class="prit-badge">RIT</span></div>
+            </div>`;
+          }
+          const scatolette = calcolaPremio(data, righe.length, r.posizione);
+          return `
+          <div class="mrow pos-${r.posizione}">
+            <div class="mrow-pos"><span class="lb-pos ${classiPosizione[r.posizione] || "plain"}">${r.posizione}</span></div>
+            <div class="mrow-main">
+              <div class="mrow-nome player-name">${r.nome}</div>
+              <div class="mrow-sub">Netto ${r.netto}</div>
+            </div>
+            <div class="mrow-side">${badgePremio(scatolette)}</div>
+          </div>`;
+        }
+
+        const top5Html = top5.map(rigaCompatta).join("");
+        const restoHtml = resto.map(rigaCompatta).join("");
+        const toggleHtml = resto.length
+          ? `<button type="button" class="btn btn-outline archivio-toggle" data-target="archivio-resto-${idx}">Mostra tutti (+${resto.length} giocatori)</button>
+             <div class="archivio-gara-resto" id="archivio-resto-${idx}">${restoHtml}</div>`
+          : "";
+
+        return `
+        <section class="card" style="margin-bottom:16px;">
+          <div class="card-header">
+            <div>
+              <h3>${gara.nome || "Round " + (gara.numero || "")}</h3>
+              <span class="meta">${formatDateIt(gara.data)}</span>
+            </div>
+            <span class="pill">${righe.length} giocatori</span>
+          </div>
+          <div class="card-body" style="padding-top:4px;">
+            <div class="mobile-rows">${top5Html}</div>
+            ${toggleHtml}
+          </div>
+        </section>`;
+      })
+      .join("");
+
+    container.querySelectorAll(".archivio-toggle").forEach((btn) => {
+      const labelChiuso = btn.textContent.trim();
+      btn.addEventListener("click", () => {
+        const target = document.getElementById(btn.dataset.target);
+        const showing = target.classList.toggle("show");
+        btn.textContent = showing ? "Mostra meno" : labelChiuso;
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>

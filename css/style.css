@@ -785,3 +785,20 @@ table.scorecard tr.pos-ritirato td.pos { color: var(--danger); font-weight: 700;
   color: var(--ink-soft);
   font-size: 0.9rem;
 }
+
+/* ---------- Archivio (stagione congelata): tab + gare compatte ---------- */
+.archivio-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 18px 0 8px;
+}
+.archivio-section { display: none; }
+.archivio-section.active { display: block; }
+.archivio-toggle {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  padding: 8px 14px;
+}
+.archivio-gara-resto { display: none; margin-top: 4px; }
+.archivio-gara-resto.show { display: block; }
