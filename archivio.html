@@ -28,7 +28,7 @@
 <title>Archivio — Golf & Friends</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=61">
+<link rel="stylesheet" href="css/style.css?v=62">
 <link rel="icon" href="img/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="img/icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -196,6 +196,11 @@
   });
 
   // ---------- Money List ----------
+  // Campione della stagione 2026, evidenziato con un badge nella sua riga
+  // della Money List (aggiornare qui a fine stagione se cambia).
+  const CAMPIONE_STAGIONE_2026 = "Giorgio Pantano";
+  const badgeCampione = '<span class="champion-badge">⛳ Champion Golf &amp; Friends 2026</span>';
+
   // Hcp EGA mostrato: quello "congelato" all'ultima gara del 2026 di ciascun
   // giocatore (non quello live/attuale, che continuerà a muoversi con la
   // Winter Season) — coerente con un Archivio che resta una fotografia fissa.
@@ -224,7 +229,9 @@
       return `
       <tr class="lb-row">
         <td class="num"><span class="lb-pos ${classePos}">${pos}</span></td>
-        <td><div class="lb-player"><span class="lb-avatar">${inizialiGiocatore(nome)}</span><span class="lb-nome player-name">${nome}</span></div></td>
+        <td><div class="lb-player"><span class="lb-avatar">${inizialiGiocatore(nome)}</span><span class="lb-nome player-name">${nome}</span>${
+          nome === CAMPIONE_STAGIONE_2026 ? badgeCampione : ""
+        }</div></td>
         <td class="num">${hcp === null ? "—" : hcp.toFixed(1)}</td>
         <td class="num">${premioCella}</td>
       </tr>`;
@@ -250,6 +257,7 @@
         <div class="mrow-pos"><span class="lb-pos ${classePos}">${pos}</span></div>
         <div class="mrow-main">
           <div class="mrow-nome player-name">${nome}</div>
+          ${nome === CAMPIONE_STAGIONE_2026 ? badgeCampione : ""}
           <div class="mrow-sub">Hcp ${hcp === null ? "—" : hcp.toFixed(1)}</div>
         </div>
         <div class="mrow-side">${premioCella}</div>

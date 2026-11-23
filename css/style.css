@@ -802,3 +802,16 @@ table.scorecard tr.pos-ritirato td.pos { color: var(--danger); font-weight: 700;
 }
 .archivio-gara-resto { display: none; margin-top: 4px; }
 .archivio-gara-resto.show { display: block; }
+.champion-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  background: var(--rolex-green);
+  color: #fbe6ad;
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.mrow-main .champion-badge { margin: 2px 0; }
