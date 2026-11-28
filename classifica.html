@@ -80,7 +80,12 @@
 <script src="js/common.js?v=52"></script>
 <script>
 (async function () {
-  const data = await loadData();
+  const dataCompleta = await loadData();
+  // Nuova stagione (Winter Season): mostriamo solo le gare da questa data in
+  // poi. Le gare precedenti restano salvate su Firestore e consultabili
+  // nell'Archivio (archivio.html), che fa il filtro opposto.
+  const INIZIO_STAGIONE_CORRENTE = "2026-11-28";
+  const data = { ...dataCompleta, gare: dataCompleta.gare.filter((g) => g.data >= INIZIO_STAGIONE_CORRENTE) };
   const container = document.getElementById("gare-container");
   const gare = [...data.gare].sort((a, b) => new Date(b.data) - new Date(a.data));
 

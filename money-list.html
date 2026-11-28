@@ -97,7 +97,12 @@
 (async function () {
   document.getElementById("money-list-titolo").textContent = "Golf & Friends";
   document.getElementById("money-list-stagione").textContent = `Season ${new Date().getFullYear()}`;
-  const data = await loadData();
+  const dataCompleta = await loadData();
+  // Nuova stagione (Winter Season): mostriamo solo le gare da questa data in
+  // poi. Le gare precedenti restano salvate su Firestore e consultabili
+  // nell'Archivio (archivio.html), che fa il filtro opposto.
+  const INIZIO_STAGIONE_CORRENTE = "2026-11-28";
+  const data = { ...dataCompleta, gare: dataCompleta.gare.filter((g) => g.data >= INIZIO_STAGIONE_CORRENTE) };
   const ranked = calcolaScatoletteTotali(data, true);
 
   const totaleScatolette = ranked.reduce((sum, r) => sum + r.totale, 0);
